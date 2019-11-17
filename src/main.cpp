@@ -5,7 +5,7 @@
 #include <functional>
 #include <iostream>
 
-#include "simulation/BoxCase.hpp"
+#include "scene/BoxCase.hpp"
 
 BaseCase* simulation;
 

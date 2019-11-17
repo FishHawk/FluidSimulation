@@ -8,6 +8,7 @@
 
 #include "../render/FpsCamera.hpp"
 #include "../render/Shader.hpp"
+#include "../simulation/Fluid.hpp"
 
 class BaseCase {
 protected:
