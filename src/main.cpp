@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // load all OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    glEnable(GL_DEPTH_TEST);
     simulation = new BoxCase();
     // main loop
     while (!glfwWindowShouldClose(window)) {
@@ -63,8 +64,8 @@ int main(int argc, char* argv[]) {
         simulation->process_keyboard_input(window, deltaTime);
 
         // render
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         simulation->render();
 
         // swap buffers and poll IO events
