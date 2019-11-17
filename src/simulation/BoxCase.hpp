@@ -5,59 +5,60 @@
 
 class BoxCase : public BaseCase {
 private:
-    float box[108] = {
-        -0.5f, -0.5f, -0.5f,  //
-        0.5f, -0.5f, -0.5f,   //
-        0.5f, 0.5f, -0.5f,    //
-        0.5f, 0.5f, -0.5f,    //
-        -0.5f, 0.5f, -0.5f,   //
-        -0.5f, -0.5f, -0.5f,  //
-
-        -0.5f, -0.5f, 0.5f,  //
-        0.5f, -0.5f, 0.5f,   //
-        0.5f, 0.5f, 0.5f,    //
-        0.5f, 0.5f, 0.5f,    //
-        -0.5f, 0.5f, 0.5f,   //
-        -0.5f, -0.5f, 0.5f,  //
-
-        -0.5f, 0.5f, 0.5f,    //
-        -0.5f, 0.5f, -0.5f,   //
-        -0.5f, -0.5f, -0.5f,  //
-        -0.5f, -0.5f, -0.5f,  //
-        -0.5f, -0.5f, 0.5f,   //
-        -0.5f, 0.5f, 0.5f,    //
-
-        0.5f, 0.5f, 0.5f,    //
-        0.5f, 0.5f, -0.5f,   //
-        0.5f, -0.5f, -0.5f,  //
-        0.5f, -0.5f, -0.5f,  //
-        0.5f, -0.5f, 0.5f,   //
-        0.5f, 0.5f, 0.5f,    //
-
-        -0.5f, -0.5f, -0.5f,  //
-        0.5f, -0.5f, -0.5f,   //
-        0.5f, -0.5f, 0.5f,    //
-        0.5f, -0.5f, 0.5f,    //
-        -0.5f, -0.5f, 0.5f,   //
-        -0.5f, -0.5f, -0.5f,  //
-
-        -0.5f, 0.5f, -0.5f,  //
-        0.5f, 0.5f, -0.5f,   //
-        0.5f, 0.5f, 0.5f,    //
-        0.5f, 0.5f, 0.5f,    //
-        -0.5f, 0.5f, 0.5f,   //
-        -0.5f, 0.5f, -0.5f,  //
+    /* clang-format off */
+    float box[216] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,//
+//
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,//
+//
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,//
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,//
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,//
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,//
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,//
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,//
+//
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,//
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,//
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,//
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,//
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,//
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,//
+//
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,//
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,//
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,//
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,//
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,//
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,//
+//
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,//
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,//
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f//
     };
     unsigned int box_vbo_, box_vao_;
     Shader box_shader_;
 
-    float plane[18] = {
-        -0.5f, 0.0f, -0.5f,  //
-        0.5f, 0.0f, -0.5f,   //
-        0.5f, 0.0f, 0.5f,    //
-        0.5f, 0.0f, 0.5f,    //
-        -0.5f, 0.0f, 0.5f,   //
-        -0.5f, 0.0f, -0.5f,  //
+    float plane[36] = {
+        -0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,//
+         0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,//
+        -0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,//
+        -0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f//
     };
     unsigned int plane_vbo_, plane_vao_;
     Shader plane_shader_;
@@ -80,8 +81,12 @@ BoxCase::BoxCase()
     glBindBuffer(GL_ARRAY_BUFFER, box_vbo_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // for plane
     glGenVertexArrays(1, &plane_vao_);
@@ -91,8 +96,12 @@ BoxCase::BoxCase()
     glBindBuffer(GL_ARRAY_BUFFER, plane_vbo_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(plane), plane, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 };
 
 BoxCase::~BoxCase() {}
@@ -111,13 +120,14 @@ void BoxCase::render() {
     box_shader_.set_uniform("model", model);
     box_shader_.set_uniform("view", view);
     box_shader_.set_uniform("projection", projection);
+    box_shader_.set_uniform("view_pos", camera_.get_position());
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     plane_shader_.use();
     glBindVertexArray(plane_vao_);
 
     model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(100.0f, 1.0f, 100.0f));
+    model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
     plane_shader_.set_uniform("model", model);
     plane_shader_.set_uniform("view", view);
     plane_shader_.set_uniform("projection", projection);

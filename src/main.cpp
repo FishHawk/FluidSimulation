@@ -52,6 +52,7 @@ int main(int argc, char* argv[]) {
     }
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_FRAMEBUFFER_SRGB);
     simulation = new BoxCase();
     // main loop
     while (!glfwWindowShouldClose(window)) {

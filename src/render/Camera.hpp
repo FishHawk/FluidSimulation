@@ -18,7 +18,7 @@ public:
 
     Camera(glm::vec3 position, float yaw, float pitch, float frame_ratio)
         : position_(position),
-          yaw_(yaw_),
+          yaw_(yaw),
           pitch_(pitch),
           frame_ratio_(frame_ratio) {
         update_direction_vector();
@@ -26,6 +26,10 @@ public:
 
     virtual glm::mat4 get_view_matrix() = 0;
     virtual glm::mat4 get_projection_matrix() = 0;
+
+    const glm::vec3 get_position() {
+        return position_;
+    }
 
     void move(MovementDirection direction, float delta_time) {
         float velocity = move_speed_ * delta_time;
