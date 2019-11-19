@@ -31,6 +31,8 @@ public:
 
     void render();
 
+    void update_particles(std::vector<glm::vec3> positions);
+
     void process_keyboard_input(GLFWwindow* window, float delta_time) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
@@ -115,20 +117,14 @@ RenderSystem::RenderSystem()
         auto mesh = builder.build_mesh();
         mesh_manager_["partical"] = mesh;
         drawable_manager_["particals"] = new InstanceDrawable3(mesh);
-
-        std::vector<glm::vec3> positions;
-        for (int z = 0; z < 10; z += 1) {
-            for (int y = 0; y < 10; y += 1) {
-                for (int x = 0; x < 10; x += 1) {
-                    positions.push_back(glm::vec3((float)x * 0.1, (float)y * 0.1, (float)z * 0.1));
-                }
-            }
-        }
-        dynamic_cast<InstanceDrawable3*>(drawable_manager_["particals"])->update_positions(positions);
     }
 }
 
 RenderSystem::~RenderSystem() {}
+
+void RenderSystem::update_particles(std::vector<glm::vec3> positions) {
+    dynamic_cast<InstanceDrawable3*>(drawable_manager_["particals"])->update_positions(positions);
+}
 
 void RenderSystem::render() {
     glm::mat4 model;

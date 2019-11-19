@@ -4,21 +4,24 @@
 
 #include <functional>
 #include <iostream>
+#include <thread>
 
 #include "render/RenderSystem.hpp"
+#include "simulation/FluidSolver.hpp"
 
-RenderSystem* simulation;
+RenderSystem* render_system;
+FluidSolver* fluid_solver;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    simulation->framebuffer_size_callback(window, width, height);
+    render_system->framebuffer_size_callback(window, width, height);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    simulation->mouse_callback(window, xpos, ypos);
+    render_system->mouse_callback(window, xpos, ypos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    simulation->scroll_callback(window, xoffset, yoffset);
+    render_system->scroll_callback(window, xoffset, yoffset);
 }
 
 // timing
@@ -51,10 +54,18 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    render_system = new RenderSystem();
+    fluid_solver = new FluidSolver();
+    std::thread simulation_thread([&] {
+        while (fluid_solver->is_running()) {
+            fluid_solver->simulation();
+        }
+    });
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
-    simulation = new RenderSystem();
+
     // main loop
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
@@ -63,18 +74,23 @@ int main(int argc, char* argv[]) {
         lastFrame = currentFrame;
 
         // input
-        simulation->process_keyboard_input(window, deltaTime);
+        render_system->process_keyboard_input(window, deltaTime);
+
+        // update
+        render_system->update_particles(fluid_solver->get_partical_position());
 
         // render
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        simulation->render();
+        render_system->render();
 
         // swap buffers and poll IO events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    fluid_solver->terminate();
+    simulation_thread.join();
     glfwTerminate();
     return 0;
 }

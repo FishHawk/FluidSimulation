@@ -6,6 +6,7 @@ find_package(glfw3 REQUIRED)
 add_executable(fluid_simulation
     render/Shader.cpp
     render/Camera.cpp
+    simulation/FluidSolver.cpp
     main.cpp)
 
 target_link_libraries(fluid_simulation
@@ -13,4 +14,5 @@ target_link_libraries(fluid_simulation
         ${CMAKE_DL_LIBS}
         ${glm_LIBRARIES}
         glad
-        glfw)
+        glfw
+        pthread)
