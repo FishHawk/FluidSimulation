@@ -5,9 +5,9 @@
 #include <functional>
 #include <iostream>
 
-#include "scene/BoxCase.hpp"
+#include "render/RenderSystem.hpp"
 
-BaseCase* simulation;
+RenderSystem* simulation;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     simulation->framebuffer_size_callback(window, width, height);
@@ -53,7 +53,8 @@ int main(int argc, char* argv[]) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
-    simulation = new BoxCase();
+    glEnable(GL_CULL_FACE);
+    simulation = new RenderSystem();
     // main loop
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
