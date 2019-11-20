@@ -41,12 +41,12 @@ public:
 
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(3);
-        glVertexAttribDivisor(3, 11);
+        glVertexAttribDivisor(3, 1);
     }
 
     void draw() {
         mesh_->bind();
-        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh_->size(), mesh_->size() * positions_.size());
+        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh_->size(), positions_.size());
         mesh_->unbind();
     };
 };

@@ -114,7 +114,7 @@ RenderSystem::RenderSystem()
             glm::vec3(0.0f, 0.0f, 0.0f),
             0.5,
             glm::vec3(0.0f, 1.0f, 1.0f),
-            0);
+            3);
         auto mesh = builder.build_mesh();
         mesh_manager_["partical"] = mesh;
         drawable_manager_["particals"] = new InstanceDrawable3(mesh);
