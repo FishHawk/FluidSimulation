@@ -9,18 +9,18 @@
 #include "render/RenderSystem.hpp"
 #include "simulation/FluidSolver.hpp"
 
-RenderSystem* render_system;
-FluidSolver* fluid_solver;
+RenderSystem *render_system;
+FluidSolver *fluid_solver;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     render_system->framebuffer_size_callback(window, width, height);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
     render_system->mouse_callback(window, xpos, ypos);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     render_system->scroll_callback(window, xoffset, yoffset);
 }
 
@@ -28,7 +28,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     // initialize glfw
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create window
-    GLFWwindow* window = glfwCreateWindow(1400, 1000, "FluidSimulation", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(1400, 1000, "FluidSimulation", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -72,6 +72,7 @@ int main(int argc, char* argv[]) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        std::cout << 1 / deltaTime << "fps\r" << std::flush;
 
         // input
         render_system->process_keyboard_input(window, deltaTime);

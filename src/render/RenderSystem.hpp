@@ -14,9 +14,9 @@
 
 class RenderSystem {
 private:
-    std::map<std::string, Mesh*> mesh_manager_;
-    std::map<std::string, Shader*> shader_manager_;
-    std::map<std::string, Drawable*> drawable_manager_;
+    std::map<std::string, Mesh *> mesh_manager_;
+    std::map<std::string, Shader *> shader_manager_;
+    std::map<std::string, Drawable *> drawable_manager_;
 
     FpsCamera camera_;
 
@@ -33,7 +33,7 @@ public:
 
     void update_particles(std::vector<glm::vec3> positions);
 
-    void process_keyboard_input(GLFWwindow* window, float delta_time) {
+    void process_keyboard_input(GLFWwindow *window, float delta_time) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
@@ -47,12 +47,12 @@ public:
             camera_.move(Camera::MovementDirection::RIGHT, delta_time);
     }
 
-    void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
         camera_.change_frame_ratio((float)width / (float)height);
     }
 
-    void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
         static float xlast = 0;
         static float ylast = 0;
         static bool is_first = true;
@@ -71,7 +71,7 @@ public:
         ylast = ypos;
     }
 
-    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
         camera_.zoom(yoffset);
     }
 };
@@ -101,7 +101,7 @@ RenderSystem::RenderSystem()
     {
         Mesh3Builder builder;
         builder.add_cube(
-            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(0.0f, 0.0f, 1.0f),
             glm::vec3(1.0f, 1.0f, 1.0f),
             glm::vec3(1.0f, 0.0f, 0.0f));
         auto mesh = builder.build_mesh();
@@ -110,20 +110,31 @@ RenderSystem::RenderSystem()
     }
     {
         Mesh3Builder builder;
-        builder.add_cube(
+        builder.add_icosphere(
             glm::vec3(0.0f, 0.0f, 0.0f),
-            glm::vec3(1.0f, 1.0f, 1.0f),
-            glm::vec3(1.0f, 0.0f, 0.0f));
+            0.5,
+            glm::vec3(0.0f, 1.0f, 1.0f),
+            0);
         auto mesh = builder.build_mesh();
         mesh_manager_["partical"] = mesh;
         drawable_manager_["particals"] = new InstanceDrawable3(mesh);
+    }
+    {
+        Mesh3Builder builder;
+        builder.add_icosphere(
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            0.5,
+            glm::vec3(0.0f, 1.0f, 1.0f));
+        auto mesh = builder.build_mesh();
+        mesh_manager_["sphere"] = mesh;
+        drawable_manager_["sphere"] = new Drawable3(mesh);
     }
 }
 
 RenderSystem::~RenderSystem() {}
 
 void RenderSystem::update_particles(std::vector<glm::vec3> positions) {
-    dynamic_cast<InstanceDrawable3*>(drawable_manager_["particals"])->update_positions(positions);
+    dynamic_cast<InstanceDrawable3 *>(drawable_manager_["particals"])->update_positions(positions);
 }
 
 void RenderSystem::render() {
@@ -131,7 +142,7 @@ void RenderSystem::render() {
     glm::mat4 view = camera_.view_matrix();
     glm::mat4 projection = camera_.projection_matrix();
 
-    auto& simple3_shader_ = *shader_manager_["simple3"];
+    auto &simple3_shader_ = *shader_manager_["simple3"];
     simple3_shader_.use();
     simple3_shader_.set_uniform("view", view);
     simple3_shader_.set_uniform("projection", projection);
@@ -141,8 +152,9 @@ void RenderSystem::render() {
     simple3_shader_.set_uniform("model", model);
     drawable_manager_["floor"]->draw();
     // drawable_manager_["box"]->draw();
+    // drawable_manager_["sphere"]->draw();
 
-    auto& particals_shader_ = *shader_manager_["particals"];
+    auto &particals_shader_ = *shader_manager_["particals"];
     particals_shader_.use();
     particals_shader_.set_uniform("view", view);
     particals_shader_.set_uniform("projection", projection);

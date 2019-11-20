@@ -37,7 +37,7 @@ public:
         mesh_->bind();
         glGenBuffers(1, &vbo_);
         glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        glBufferData(GL_ARRAY_BUFFER, size * sizeof(glm::vec3), &positions_[0], GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, size * sizeof(glm::vec3), &positions_[0], GL_STATIC_DRAW);
 
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(3);
