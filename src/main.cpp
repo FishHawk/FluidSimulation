@@ -7,23 +7,6 @@
 #include <thread>
 
 #include "SceneBuilder.hpp"
-#include "render/RenderSystem.hpp"
-#include "simulation/FluidSolver.hpp"
-
-RenderSystem *render_system;
-FluidSolver *fluid_solver;
-
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    render_system->framebuffer_size_callback(window, width, height);
-}
-
-void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-    render_system->mouse_callback(window, xpos, ypos);
-}
-
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-    render_system->scroll_callback(window, xoffset, yoffset);
-}
 
 // timing
 float deltaTime = 0.0f;
@@ -44,9 +27,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetFramebufferSizeCallback(window, RenderSystem::framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, RenderSystem::mouse_callback);
+    glfwSetScrollCallback(window, RenderSystem::scroll_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // load all OpenGL function pointers
@@ -54,24 +37,22 @@ int main(int argc, char *argv[]) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
-    render_system = new RenderSystem();
-    fluid_solver = new FluidSolver();
-
-
-    auto fluid_particles = SceneBuilder::init_fluid_particles();
-    auto boundary_particles = SceneBuilder::init_boundary_particles();
-    fluid_solver->setup_model(fluid_particles, boundary_particles);
-
-    std::thread simulation_thread([&] {
-        while (fluid_solver->is_running()) {
-            fluid_solver->simulation();
-        }
-    });
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_CULL_FACE);
+
+    // build scene
+    auto &render_system = RenderSystem::get_instance();
+    auto &fluid_solver = FluidSolver::get_instance();
+    SceneBuilder::build_scene(render_system, fluid_solver);
+
+    std::thread simulation_thread([&] {
+        while (!glfwWindowShouldClose(window)) {
+            while (fluid_solver.is_running()) {
+                fluid_solver.simulation();
+            }
+        }
+    });
 
     // main loop
     while (!glfwWindowShouldClose(window)) {
@@ -82,22 +63,22 @@ int main(int argc, char *argv[]) {
         std::cout << 1 / deltaTime << "fps\r" << std::flush;
 
         // input
-        render_system->process_keyboard_input(window, deltaTime);
+        render_system.process_keyboard_input(window, deltaTime);
 
         // update
-        render_system->update_particles(fluid_solver->get_partical_position());
+        render_system.update_particles(fluid_solver.get_partical_position());
 
         // render
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        render_system->render();
+        render_system.render();
 
         // swap buffers and poll IO events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    fluid_solver->terminate();
+    fluid_solver.terminate();
     simulation_thread.join();
     glfwTerminate();
     return 0;

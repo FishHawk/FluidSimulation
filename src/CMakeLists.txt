@@ -5,6 +5,9 @@ find_package(glfw3 REQUIRED)
 
 add_executable(fluid_simulation
     SceneBuilder.cpp
+    render/RenderSystem.cpp
+    render/Mesh.cpp
+    render/MeshBuilder.cpp
     render/Shader.cpp
     render/Camera.cpp
     simulation/FluidSolver.cpp

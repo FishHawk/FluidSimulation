@@ -51,3 +51,9 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles() {
 
     return boundary_particles;
 }
+
+void SceneBuilder::build_scene(RenderSystem &render_system, FluidSolver &fluid_solver) {
+    auto fluid_particles = SceneBuilder::init_fluid_particles();
+    auto boundary_particles = SceneBuilder::init_boundary_particles();
+    fluid_solver.setup_model(fluid_particles, boundary_particles);
+}

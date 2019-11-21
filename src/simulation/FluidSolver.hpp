@@ -25,8 +25,16 @@ private:
     void update_particles_ignore_constraint(float delta_time);
     void correct_velocity(float delta_time);
 
-public:
     FluidSolver();
+    FluidSolver(FluidSolver const &) = delete;
+    void operator=(FluidSolver const &) = delete;
+
+public:
+    static FluidSolver &get_instance() {
+        static FluidSolver instance;
+        return instance;
+    };
+    ~FluidSolver() = default;
 
     bool is_running() { return is_running_; };
     void terminate() { is_running_ = false; };
