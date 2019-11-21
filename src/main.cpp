@@ -6,6 +6,7 @@
 #include <iostream>
 #include <thread>
 
+#include "SceneBuilder.hpp"
 #include "render/RenderSystem.hpp"
 #include "simulation/FluidSolver.hpp"
 
@@ -56,6 +57,12 @@ int main(int argc, char *argv[]) {
 
     render_system = new RenderSystem();
     fluid_solver = new FluidSolver();
+
+
+    auto fluid_particles = SceneBuilder::init_fluid_particles();
+    auto boundary_particles = SceneBuilder::init_boundary_particles();
+    fluid_solver->setup_model(fluid_particles, boundary_particles);
+
     std::thread simulation_thread([&] {
         while (fluid_solver->is_running()) {
             fluid_solver->simulation();

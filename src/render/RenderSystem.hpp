@@ -161,7 +161,7 @@ void RenderSystem::render() {
     particals_shader_.set_uniform("view_pos", camera_.position());
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
-    model = glm::scale(model, glm::vec3(0.08f, 0.08f, 0.08f));
+    model = glm::scale(model, glm::vec3(0.025f));
     particals_shader_.set_uniform("model", model);
     drawable_manager_["particals"]->draw();
 };

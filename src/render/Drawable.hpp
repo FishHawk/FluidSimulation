@@ -30,7 +30,7 @@ private:
 public:
     InstanceDrawable3(Mesh3* mesh) : mesh_(mesh) {};
 
-    void update_positions(std::vector<glm::vec3> positions) {
+    void update_positions(std::vector<glm::vec3>& positions) {
         positions_ = positions;
         auto size = positions.size();
 
