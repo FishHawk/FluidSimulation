@@ -21,6 +21,8 @@ private:
 
     FpsCamera camera_;
 
+    double particle_radius_ = 0.025;
+
     RenderSystem();
     RenderSystem(RenderSystem const &) = delete;
     void operator=(RenderSystem const &) = delete;
@@ -35,6 +37,9 @@ public:
     };
     ~RenderSystem();
 
+    // config
+    void set_particle_radius(double radius) { particle_radius_ = radius; }
+
     // input
     static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
     static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
@@ -44,6 +49,6 @@ public:
     void render();
 
     void update_particles(std::vector<glm::vec3> positions);
-
 };
+
 #endif

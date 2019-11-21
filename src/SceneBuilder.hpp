@@ -9,11 +9,11 @@
 
 class SceneBuilder {
 private:
-    static std::vector<glm::vec3> init_fluid_particles();
-    static std::vector<glm::vec3> init_boundary_particles();
+    static std::vector<glm::vec3> init_fluid_particles(double particle_radius);
+    static std::vector<glm::vec3> init_boundary_particles(double particle_radius);
 
 public:
-    static void build_scene(RenderSystem& render_system, FluidSolver& fluid_solver);
+    static void build_scene(RenderSystem &render_system, FluidSolver &fluid_solver);
 };
 
 #endif

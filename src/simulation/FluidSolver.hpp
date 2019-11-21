@@ -36,11 +36,14 @@ public:
     };
     ~FluidSolver() = default;
 
-    bool is_running() { return is_running_; };
-    void terminate() { is_running_ = false; };
-
+    // config
+    void set_particle_radius(double radius) { particle_radius_ = radius; }
     void setup_model(const std::vector<glm::vec3> &fluid_particles,
                      const std::vector<glm::vec3> &boundary_particles);
+
+    // is running
+    bool is_running() { return is_running_; };
+    void terminate() { is_running_ = false; };
 
     void simulation();
 

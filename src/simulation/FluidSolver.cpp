@@ -75,15 +75,16 @@ void FluidSolver::simulation() {
 std::vector<glm::vec3> FluidSolver::get_partical_position() {
     std::vector<glm::vec3> fluid_particle_positions;
     for (int i = 0; i < particles_.size(); i++) {
-        if (particles_.masses[i] == 0) {
+        // if (particles_.masses[i] == 0) {
             fluid_particle_positions.push_back(particles_.positions[i]);
-        }
+        // }
     }
     return fluid_particle_positions;
 }
 
 void FluidSolver::reset_acceleration() {
     const glm::vec3 gravity(0.0f, -9.81f, 0.0f);
+    // const glm::vec3 gravity(0.0f, -0.01f, 0.0f);
 
     for (int i = 0; i < particles_.size(); i++) {
         if (particles_.masses[i] != 0) {
