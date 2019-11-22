@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        std::cout << 1 / deltaTime << "fps\r" << std::flush;
+        // std::cout << 1 / deltaTime << "fps\r" << std::flush;
 
         // input
         render_system.process_keyboard_input(window, deltaTime);

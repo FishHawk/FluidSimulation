@@ -12,6 +12,7 @@ add_executable(fluid_simulation
     render/Camera.cpp
     simulation/FluidSolver.cpp
     simulation/Particles.cpp
+    simulation/Kernel.cpp
     main.cpp)
 
 target_link_libraries(fluid_simulation

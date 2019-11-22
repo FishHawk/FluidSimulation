@@ -4,6 +4,7 @@
 #include <chrono>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <map>
 #include <vector>
 
 #include "Particles.hpp"
@@ -14,6 +15,9 @@ private:
 
     Particles particles_;
     double particle_radius_ = 0.025;
+    size_t fluid_particals_number_ = 0;
+    size_t boundary_particals_number_ = 0;
+    double sph_radius_ = 4 * 0.025;
     double fluid_density_ = 1000.0;
 
     std::chrono::system_clock::time_point time_point_;
@@ -23,7 +27,12 @@ private:
 
     void reset_acceleration();
     void update_particles_ignore_constraint(float delta_time);
+    void constraint_projection();
     void correct_velocity(float delta_time);
+
+    std::vector<double> calculate_fluid_density(std::map<glm::ivec3, std::vector<int>> &neighbors);
+    std::vector<double> calculate_lagrange_multiplier(std::vector<double> &densities, std::map<glm::ivec3, std::vector<int>> &neighbors);
+    void solve_constraint(std::vector<double> &lambdas, std::map<glm::ivec3, std::vector<int>> &neighbors);
 
     FluidSolver();
     FluidSolver(FluidSolver const &) = delete;
@@ -37,7 +46,10 @@ public:
     ~FluidSolver() = default;
 
     // config
-    void set_particle_radius(double radius) { particle_radius_ = radius; }
+    void set_particle_radius(double radius) {
+        particle_radius_ = radius;
+        sph_radius_ = 4 * radius;
+    }
     void setup_model(const std::vector<glm::vec3> &fluid_particles,
                      const std::vector<glm::vec3> &boundary_particles);
 

@@ -26,8 +26,8 @@ std::vector<glm::vec3> SceneBuilder::init_fluid_particles(double particle_radius
     const double fluid_x = 0.5, fluid_z = 0.5, fluid_y = 0.5;
     const double x1 = -fluid_x * 0.5;
     const double x2 = fluid_x * 0.5;
-    const double y1 = 2.5 - fluid_y;
-    const double y2 = 2.5;
+    const double y1 = 1.0 - fluid_y;
+    const double y2 = 1.0;
     const double z1 = -fluid_z * 0.5;
     const double z2 = fluid_z * 0.5;
 
@@ -39,7 +39,7 @@ std::vector<glm::vec3> SceneBuilder::init_fluid_particles(double particle_radius
 std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_radius) {
     std::vector<glm::vec3> boundary_particles;
 
-    const double container_x = 1, container_z = 1, container_y = 2.5;
+    const double container_x = 1, container_z = 1, container_y = 1.5;
     const double x1 = -container_x * 0.5;
     const double x2 = container_x * 0.5;
     const double y1 = 0.0;
@@ -49,7 +49,7 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
 
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y1, z2)); // y-
     // fill(boundary_particles, particle_radius, glm::vec3(x1, y2, z1), glm::vec3(x2, y2, z2)); // y+
-    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x1, y2, z2)); // x-
+    // fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x1, y2, z2)); // x-
     fill(boundary_particles, particle_radius, glm::vec3(x2, y1, z1), glm::vec3(x2, y2, z2)); // x+
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y2, z1)); // z-
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z2), glm::vec3(x2, y2, z2)); // z+
@@ -58,7 +58,7 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
 }
 
 void SceneBuilder::build_scene(RenderSystem &render_system, FluidSolver &fluid_solver) {
-    double particle_radius = 0.025;
+    double particle_radius = 0.017;
     render_system.set_particle_radius(particle_radius);
     fluid_solver.set_particle_radius(particle_radius);
 
