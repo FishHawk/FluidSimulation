@@ -8,10 +8,6 @@
 
 #include "SceneBuilder.hpp"
 
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-
 int main(int argc, char *argv[]) {
     // initialize glfw
     glfwInit();
@@ -42,28 +38,28 @@ int main(int argc, char *argv[]) {
     glEnable(GL_CULL_FACE);
 
     // build scene
-    auto &render_system = RenderSystem::get_instance();
-    auto &fluid_solver = FluidSolver::get_instance();
-    SceneBuilder::build_scene(render_system, fluid_solver);
-
+    auto [render_system, fluid_solver] = SceneBuilder::build_scene("pbf_cpu");
     std::thread simulation_thread([&] {
         while (!glfwWindowShouldClose(window)) {
             while (fluid_solver.is_running()) {
-                fluid_solver.simulation();
+                fluid_solver.simulate();
             }
         }
     });
 
+    // timing
+    float delta_time = 0.0f;
+    float last_time_point = 0.0f;
     // main loop
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        float current_time_point = glfwGetTime();
+        delta_time = current_time_point - last_time_point;
+        last_time_point = current_time_point;
         // std::cout << 1 / deltaTime << "fps\r" << std::flush;
 
         // input
-        render_system.process_keyboard_input(window, deltaTime);
+        render_system.process_keyboard_input(window, delta_time);
 
         // update
         render_system.update_particles(fluid_solver.get_partical_position());

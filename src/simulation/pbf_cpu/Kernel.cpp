@@ -1,5 +1,7 @@
 #include "Kernel.hpp"
 
+using namespace Simulation::PbfCpu;
+
 double Kernel::poly6_kernel(const glm::vec3& r, double h) {
     double ret = 0.0;
     double rl = glm::length(r);

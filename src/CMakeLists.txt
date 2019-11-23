@@ -10,9 +10,9 @@ add_executable(fluid_simulation
     render/MeshBuilder.cpp
     render/Shader.cpp
     render/Camera.cpp
-    simulation/FluidSolver.cpp
-    simulation/Particles.cpp
-    simulation/Kernel.cpp
+    simulation/pbf_cpu/FluidSolver.cpp
+    simulation/pbf_cpu/Particles.cpp
+    simulation/pbf_cpu/Kernel.cpp
     main.cpp)
 
 target_link_libraries(fluid_simulation

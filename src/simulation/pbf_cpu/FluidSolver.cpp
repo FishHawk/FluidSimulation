@@ -2,17 +2,14 @@
 
 #include "Kernel.hpp"
 
-namespace std {
 template <>
-struct less<glm::ivec3> {
+struct std::less<glm::ivec3> {
     bool operator()(const glm::ivec3 &lhs, const glm::ivec3 &rhs) const {
         return std::tie(lhs.x, lhs.y, lhs.z) < std::tie(rhs.x, rhs.y, rhs.z);
     }
 };
-}  // namespace std
 
-FluidSolver::FluidSolver() {
-}
+using namespace Simulation::PbfCpu;
 
 void FluidSolver::update_time_step() {
     static const float max_time_step = 0.005, min_time_step = 0.0001;
@@ -76,7 +73,7 @@ void FluidSolver::setup_model(const std::vector<glm::vec3> &fluid_particles,
     boundary_particals_number_ = boundary_particles.size();
 }
 
-void FluidSolver::simulation() {
+void FluidSolver::simulate() {
     auto time_now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration<float>(time_now - time_point_).count();
     if (duration < time_step_) {
@@ -147,10 +144,6 @@ void FluidSolver::constraint_projection() {
         // calculate density and lagrange multiplier.
         auto densities = calculate_fluid_density(neighbors);
         auto lambdas = calculate_lagrange_multiplier(densities, neighbors);
-        // std::cout<<densities[0]<<"  ";
-        // std::cout<<densities[14*14*7]<<"  ";
-        // std::cout<<densities[2]<<"  ";
-        // std::cout<<std::endl;
 
         // perform density constraint.
         solve_constraint(lambdas, neighbors);

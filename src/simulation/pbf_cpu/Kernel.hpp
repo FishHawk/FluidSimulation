@@ -3,10 +3,16 @@
 
 #include <glm/glm.hpp>
 
+namespace Simulation {
+namespace PbfCpu {
+
 class Kernel {
 public:
     static double poly6_kernel(const glm::vec3 &r, double h);
     static glm::vec3 poly6_kernal_grade(const glm::vec3 &r, double h);
 };
+
+}  // namespace PbfCpu
+}  // namespace Simulation
 
 #endif

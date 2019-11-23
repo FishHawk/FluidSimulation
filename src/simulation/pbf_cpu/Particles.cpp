@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+using namespace Simulation::PbfCpu;
+
 void Particles::reserve(std::size_t size) {
     masses.reserve(size);
     inv_masses.reserve(size);
