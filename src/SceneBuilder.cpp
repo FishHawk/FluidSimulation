@@ -1,6 +1,7 @@
 #include "SceneBuilder.hpp"
 
 #include "simulation/pbf_cpu/FluidSolver.hpp"
+#include "simulation/pbf_cuda/FluidSolver.hpp"
 
 void fill(std::vector<glm::vec3> &boundary_particles,
           double particle_radius,
@@ -51,7 +52,7 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
 
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y1, z2));  // y-
     // fill(boundary_particles, particle_radius, glm::vec3(x1, y2, z1), glm::vec3(x2, y2, z2)); // y+
-    // fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x1, y2, z2)); // x-
+    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x1, y2, z2)); // x-
     fill(boundary_particles, particle_radius, glm::vec3(x2, y1, z1), glm::vec3(x2, y2, z2));  // x+
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y2, z1));  // z-
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z2), glm::vec3(x2, y2, z2));  // z+
@@ -73,6 +74,10 @@ std::pair<RenderSystem &, Simulation::FluidSolver &> SceneBuilder::build_scene(s
         fluid_solver.setup_model(fluid_particles, boundary_particles);
 
         return {render_system, fluid_solver};
-    // } else if (scene_name == "pbf-cuda") {
+    } else if (scene_name == "pbf-cuda") {
+        auto &render_system = RenderSystem::get_instance();
+        auto &fluid_solver = Simulation::PbfCuda::FluidSolver::get_instance();
+
+        return {render_system, fluid_solver};
     }
 }

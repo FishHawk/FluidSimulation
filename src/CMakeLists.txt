@@ -13,6 +13,7 @@ add_executable(fluid_simulation
     simulation/pbf_cpu/FluidSolver.cpp
     simulation/pbf_cpu/Particles.cpp
     simulation/pbf_cpu/Kernel.cpp
+    simulation/pbf_cuda/FluidSolver.cpp
     main.cpp)
 
 target_link_libraries(fluid_simulation
