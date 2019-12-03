@@ -1,5 +1,5 @@
-#ifndef RENDER_SYSTEM_HPP
-#define RENDER_SYSTEM_HPP
+#ifndef RENDER_RENDER_SYSTEM_HPP
+#define RENDER_RENDER_SYSTEM_HPP
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,6 +12,8 @@
 #include "FpsCamera.hpp"
 #include "MeshBuilder.hpp"
 #include "Shader.hpp"
+
+namespace render {
 
 class RenderSystem {
 private:
@@ -50,5 +52,7 @@ public:
 
     void update_particles(std::vector<glm::vec3> positions);
 };
+
+} // namespace render
 
 #endif

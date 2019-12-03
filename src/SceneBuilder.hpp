@@ -13,7 +13,7 @@ private:
     static std::vector<glm::vec3> init_boundary_particles(double particle_radius);
 
 public:
-    static std::pair<RenderSystem &, simulate::SimulateSystem &> build_scene(std::string scene_name);
+    static std::pair<render::RenderSystem &, simulate::SimulateSystem &> build_scene(std::string scene_name);
 };
 
 #endif

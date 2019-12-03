@@ -60,9 +60,9 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
     return boundary_particles;
 }
 
-std::pair<RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
+std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
     if (scene_name == "pbf-cpu") {
-        auto &render_system = RenderSystem::get_instance();
+        auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cpu::SimulateSystem::get_instance();
 
         double particle_radius = 0.017;
@@ -75,7 +75,7 @@ std::pair<RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(
 
         return {render_system, simulate_system};
     } else if (scene_name == "pbf-cuda") {
-        auto &render_system = RenderSystem::get_instance();
+        auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cuda::SimulateSystem::get_instance();
 
         double particle_radius = 0.025;

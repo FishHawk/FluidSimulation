@@ -1,5 +1,7 @@
 #include "RenderSystem.hpp"
 
+using namespace render;
+
 void RenderSystem::framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     auto &render_system = get_instance();
     glViewport(0, 0, width, height);

@@ -1,10 +1,12 @@
-#ifndef SHADER_HPP
-#define SHADER_HPP
+#ifndef RENDER_SHADER_HPP
+#define RENDER_SHADER_HPP
 
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <string>
+
+namespace render {
 
 class Shader {
 public:
@@ -47,5 +49,7 @@ public:
 private:
     unsigned int id_;
 };
+
+} // namespace render
 
 #endif

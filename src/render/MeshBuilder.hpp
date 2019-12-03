@@ -1,7 +1,9 @@
-#ifndef MESH_BUILDER_HPP
-#define MESH_BUILDER_HPP
+#ifndef RENDER_MESH_BUILDER_HPP
+#define RENDER_MESH_BUILDER_HPP
 
 #include "Mesh.hpp"
+
+namespace render {
 
 class Mesh3Builder {
 private:
@@ -33,5 +35,7 @@ public:
         return new Mesh3(vertices_);
     };
 };
+
+} // namespace render
 
 #endif

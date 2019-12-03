@@ -1,11 +1,13 @@
-#ifndef CAMERA_HPP
-#define CAMERA_HPP
+#ifndef RENDER_CAMERA_HPP
+#define RENDER_CAMERA_HPP
 
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+
+namespace render {
 
 class Camera {
 public:
@@ -59,5 +61,7 @@ protected:
 
     void update_direction_vector();
 };
+
+} // namespace render
 
 #endif

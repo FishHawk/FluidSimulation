@@ -23,9 +23,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, RenderSystem::framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, RenderSystem::mouse_callback);
-    glfwSetScrollCallback(window, RenderSystem::scroll_callback);
+    glfwSetFramebufferSizeCallback(window, render::RenderSystem::framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, render::RenderSystem::mouse_callback);
+    glfwSetScrollCallback(window, render::RenderSystem::scroll_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // load all OpenGL function pointers

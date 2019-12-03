@@ -1,7 +1,9 @@
-#ifndef FPS_CAMERA_HPP
-#define FPS_CAMERA_HPP
+#ifndef RENDER_FPS_CAMERA_HPP
+#define RENDER_FPS_CAMERA_HPP
 
 #include "Camera.hpp"
+
+namespace render {
 
 class FpsCamera : public Camera {
 public:
@@ -16,5 +18,7 @@ public:
         return glm::perspective(glm::radians(zoom_), frame_ratio_, 0.1f, 100.0f);
     }
 };
+
+} // namespace render
 
 #endif

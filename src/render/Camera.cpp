@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 
+using namespace render;
+
 void Camera::update_direction_vector() {
     glm::vec3 front;
     front.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));

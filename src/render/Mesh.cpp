@@ -1,5 +1,7 @@
 #include "Mesh.hpp"
 
+using namespace render;
+
 Mesh3::Mesh3(std::vector<Vertex3> vertices) {
     size_ = vertices.size();
 

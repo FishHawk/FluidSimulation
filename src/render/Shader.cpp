@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+using namespace render;
+
 void check_compile_errors(unsigned int shader, std::string type) {
     int success;
     char infoLog[1024];

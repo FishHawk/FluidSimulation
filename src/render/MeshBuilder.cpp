@@ -1,5 +1,7 @@
 #include "MeshBuilder.hpp"
 
+using namespace render;
+
 void Mesh3Builder::add_triangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color) {
     glm::vec3 norm = glm::normalize(glm::cross(p1 - p2, p1 - p3));
     vertices_.push_back(Vertex3{p1, color, norm});

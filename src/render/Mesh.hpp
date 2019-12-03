@@ -1,10 +1,12 @@
-#ifndef MESH_HPP
-#define MESH_HPP
+#ifndef RENDER_MESH_HPP
+#define RENDER_MESH_HPP
 
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <vector>
+
+namespace render {
 
 struct Vertex3 {
     glm::vec3 position;
@@ -33,5 +35,7 @@ class Mesh3 : public Mesh {
 public:
     Mesh3(std::vector<Vertex3> vertices);
 };
+
+} // namespace render
 
 #endif
