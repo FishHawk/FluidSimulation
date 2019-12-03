@@ -1,10 +1,10 @@
-#ifndef KERNAL_HPP
-#define KERNAL_HPP
+#ifndef SIMULATE_CPU_KERNAL_HPP
+#define SIMULATE_CPU_KERNAL_HPP
 
 #include <glm/glm.hpp>
 
-namespace Simulation {
-namespace PbfCpu {
+namespace simulate {
+namespace cpu {
 
 class Kernel {
 public:
@@ -12,7 +12,7 @@ public:
     static glm::vec3 poly6_kernal_grade(const glm::vec3 &r, double h);
 };
 
-}  // namespace PbfCpu
-}  // namespace Simulation
+} // namespace cpu
+} // namespace simulate
 
 #endif

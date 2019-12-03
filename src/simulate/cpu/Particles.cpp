@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-using namespace Simulation::PbfCpu;
+using namespace simulate::cpu;
 
 void Particles::reserve(std::size_t size) {
     masses.reserve(size);

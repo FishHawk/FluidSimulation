@@ -1,5 +1,5 @@
-#ifndef FLUID_SOLVER_PBF_CUDA_HPP
-#define FLUID_SOLVER_PBF_CUDA_HPP
+#ifndef SIMULATE_CUDA_SIMULATE_SYSTEM_HPP
+#define SIMULATE_CUDA_SIMULATE_SYSTEM_HPP
 
 #include <chrono>
 #include <glm/glm.hpp>
@@ -7,13 +7,13 @@
 #include <map>
 #include <vector>
 
-#include "../FluidSolver.hpp"
-#include "CudaWarp.cuh"
+#include "../SimulateSystem.hpp"
+#include "FluidSolver.cuh"
 
-namespace Simulation {
-namespace PbfCuda {
+namespace simulate {
+namespace cuda {
 
-class FluidSolver : public ::Simulation::FluidSolver {
+class SimulateSystem : public ::simulate::SimulateSystem {
 private:
     std::vector<glm::vec4> positions_;
     size_t fluid_particles_number_ = 0;
@@ -22,19 +22,19 @@ private:
     std::chrono::system_clock::time_point time_point_;
     float time_step_ = 0.016;
 
-	SimulateParams m_params;
+    SimulateParams m_params;
     FluidSolverCuda solver_;
 
-    FluidSolver() = default;
-    FluidSolver(FluidSolver const &) = delete;
-    void operator=(FluidSolver const &) = delete;
+    SimulateSystem() = default;
+    SimulateSystem(SimulateSystem const &) = delete;
+    void operator=(SimulateSystem const &) = delete;
 
 public:
-    static FluidSolver &get_instance() {
-        static FluidSolver instance;
+    static SimulateSystem &get_instance() {
+        static SimulateSystem instance;
         return instance;
     };
-    ~FluidSolver() = default;
+    ~SimulateSystem() = default;
 
     // config
     void set_particle_radius(double radius) {
@@ -48,7 +48,7 @@ public:
     std::vector<glm::vec3> get_partical_position() override;
 };
 
-} // namespace PbfCuda
-} // namespace Simulation
+} // namespace cuda
+} // namespace simulate
 
 #endif

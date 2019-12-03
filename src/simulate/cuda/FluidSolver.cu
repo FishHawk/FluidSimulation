@@ -1,11 +1,10 @@
-#include "CudaWarp.cuh"
+#include "FluidSolver.cuh"
+#include "Kernel.cuh"
 
 #include <cuda_runtime.h>
 #include <iostream>
 
-#include "CudaKernel.cuh"
-
-using namespace Simulation::PbfCuda;
+using namespace simulate::cuda;
 
 void print_gpu_info() {
     cudaDeviceProp dev_prop;
@@ -31,8 +30,6 @@ void check_cuda_error(const char *error_msg) {
 void setParameters(SimulateParams *hostParams) {
     cudaMemcpyToSymbol(params, hostParams, sizeof(SimulateParams));
 }
-
-
 
 void FluidSolverCuda::malloc() {
     cudaMalloc((void **)&positions, particles_number * sizeof(float4));

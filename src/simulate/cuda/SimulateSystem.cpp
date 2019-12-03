@@ -1,11 +1,11 @@
-#include "FluidSolver.hpp"
+#include "SimulateSystem.hpp"
 
 #include <cuda_runtime.h>
 
-using namespace Simulation::PbfCuda;
+using namespace simulate::cuda;
 
-void FluidSolver::setup_model(const std::vector<glm::vec3> &fluid_particles,
-                              const std::vector<glm::vec3> &boundary_particles) {
+void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
+                                 const std::vector<glm::vec3> &boundary_particles) {
     fluid_particles_number_ = fluid_particles.size();
     boundary_particles_number_ = boundary_particles.size();
 
@@ -51,7 +51,7 @@ void FluidSolver::setup_model(const std::vector<glm::vec3> &fluid_particles,
                                       pow(m_params.m_sphRadiusSquared - pow(0.1 * m_params.m_sphRadius, 2.0), 3.0));
 }
 
-void FluidSolver::simulate() {
+void SimulateSystem::simulate() {
     auto time_now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration<float>(time_now - time_point_).count();
     if (duration < time_step_) {
@@ -67,7 +67,7 @@ void FluidSolver::simulate() {
     }
 }
 
-std::vector<glm::vec3> FluidSolver::get_partical_position() {
+std::vector<glm::vec3> SimulateSystem::get_partical_position() {
     cudaMemcpy(positions_.data(), solver_.positions, positions_.size() * sizeof(float4), cudaMemcpyDeviceToHost);
     std::vector<glm::vec3> fluid_postitions;
     for (int i = 0; i < fluid_particles_number_; i++) {

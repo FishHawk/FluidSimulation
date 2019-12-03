@@ -1,11 +1,12 @@
-#ifndef FLUID_SLOVER_HPP
-#define FLUID_SLOVER_HPP
+#ifndef SIMULATE_SIMULATE_SYSTEM_HPP
+#define SIMULATE_SIMULATE_SYSTEM_HPP
 
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace Simulation {
-class FluidSolver {
+namespace simulate {
+
+class SimulateSystem {
 private:
     bool is_running_ = true;
 
@@ -17,6 +18,7 @@ public:
     virtual void simulate() = 0;
     virtual std::vector<glm::vec3> get_partical_position() = 0;
 };
-}  // namespace Simulation
+
+} // namespace simulate
 
 #endif

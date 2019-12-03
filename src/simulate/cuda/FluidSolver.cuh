@@ -1,10 +1,10 @@
-#ifndef CUDA_WARP_CUH
-#define CUDA_WARP_CUH
+#ifndef SIMULATE_CUDA_FLUID_SOLVER_CUH
+#define SIMULATE_CUDA_FLUID_SOLVER_CUH
 
 #include <vector_types.h>
 
-namespace Simulation {
-namespace PbfCuda {
+namespace simulate {
+namespace cuda {
 
 class FluidSolverCuda {
 public:
@@ -23,8 +23,8 @@ public:
     void simulate(float delta_time);
 };
 
-} // namespace PbfCuda
-} // namespace Simulation
+} // namespace cuda
+} // namespace simulate
 
 struct SimulateParams {
     uint3 m_gridSize;

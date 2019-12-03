@@ -1,4 +1,4 @@
-#include "FluidSolver.hpp"
+#include "SimulateSystem.hpp"
 
 #include "Kernel.hpp"
 
@@ -9,9 +9,9 @@ struct std::less<glm::ivec3> {
     }
 };
 
-using namespace Simulation::PbfCpu;
+using namespace simulate::cpu;
 
-void FluidSolver::update_time_step() {
+void SimulateSystem::update_time_step() {
     static const float max_time_step = 0.005, min_time_step = 0.0001;
 
     float max_mag = 0.1;
@@ -32,7 +32,7 @@ void FluidSolver::update_time_step() {
     // time_step_ = std::max(time_step_, min_time_step);
 }
 
-void FluidSolver::setup_model(const std::vector<glm::vec3> &fluid_particles,
+void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
                               const std::vector<glm::vec3> &boundary_particles) {
     time_point_ = std::chrono::system_clock::now();
 
@@ -73,7 +73,7 @@ void FluidSolver::setup_model(const std::vector<glm::vec3> &fluid_particles,
     boundary_particals_number_ = boundary_particles.size();
 }
 
-void FluidSolver::simulate() {
+void SimulateSystem::simulate() {
     auto time_now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration<float>(time_now - time_point_).count();
     if (duration < time_step_) {
@@ -97,7 +97,7 @@ void FluidSolver::simulate() {
     }
 }
 
-std::vector<glm::vec3> FluidSolver::get_partical_position() {
+std::vector<glm::vec3> SimulateSystem::get_partical_position() {
     std::vector<glm::vec3> fluid_particle_positions;
     // for (int i = 0; i < particles_.size(); i++) {
     for (int i = 0; i < fluid_particals_number_; i++) {
@@ -106,7 +106,7 @@ std::vector<glm::vec3> FluidSolver::get_partical_position() {
     return fluid_particle_positions;
 }
 
-void FluidSolver::reset_acceleration() {
+void SimulateSystem::reset_acceleration() {
     const glm::vec3 gravity(0.0f, -9.81f, 0.0f);
     // const glm::vec3 gravity(0.0f, -0.01f, 0.0f);
 
@@ -115,7 +115,7 @@ void FluidSolver::reset_acceleration() {
     }
 }
 
-void FluidSolver::update_particles_ignore_constraint(float delta_time) {
+void SimulateSystem::update_particles_ignore_constraint(float delta_time) {
     for (int i = 0; i < fluid_particals_number_; i++) {
         if (particles_.masses[i] != 0) {
             particles_.last_positions[i] = particles_.old_positions[i];
@@ -126,7 +126,7 @@ void FluidSolver::update_particles_ignore_constraint(float delta_time) {
     }
 }
 
-void FluidSolver::constraint_projection() {
+void SimulateSystem::constraint_projection() {
     std::map<glm::ivec3, std::vector<int>> neighbors;
     for (int i = 0; i < particles_.size(); i++) {
         glm::ivec3 cell_index = particles_.positions[i] / (float)sph_radius_;
@@ -152,7 +152,7 @@ void FluidSolver::constraint_projection() {
     }
 }
 
-void FluidSolver::correct_velocity(float delta_time) {
+void SimulateSystem::correct_velocity(float delta_time) {
     for (int i = 0; i < particles_.size(); i++) {
         if (particles_.masses[i] != 0)
             particles_.velocities[i] = (1.0f / delta_time) *
@@ -160,7 +160,7 @@ void FluidSolver::correct_velocity(float delta_time) {
     }
 }
 
-std::vector<double> FluidSolver::calculate_fluid_density(std::map<glm::ivec3, std::vector<int>> &neighbors) {
+std::vector<double> SimulateSystem::calculate_fluid_density(std::map<glm::ivec3, std::vector<int>> &neighbors) {
     std::vector<double> densities;
     for (int i = 0; i < fluid_particals_number_; i++) {
         glm::ivec3 cell_index = particles_.positions[i] / (float)sph_radius_;
@@ -174,7 +174,7 @@ std::vector<double> FluidSolver::calculate_fluid_density(std::map<glm::ivec3, st
     return densities;
 }
 
-std::vector<double> FluidSolver::calculate_lagrange_multiplier(std::vector<double> &densities, std::map<glm::ivec3, std::vector<int>> &neighbors) {
+std::vector<double> SimulateSystem::calculate_lagrange_multiplier(std::vector<double> &densities, std::map<glm::ivec3, std::vector<int>> &neighbors) {
     std::vector<double> multipliers;
     for (int i = 0; i < fluid_particals_number_; i++) {
         const double eps = 1.0e-6;
@@ -200,7 +200,7 @@ std::vector<double> FluidSolver::calculate_lagrange_multiplier(std::vector<doubl
     return multipliers;
 }
 
-void FluidSolver::solve_constraint(std::vector<double> &lambdas, std::map<glm::ivec3, std::vector<int>> &neighbors) {
+void SimulateSystem::solve_constraint(std::vector<double> &lambdas, std::map<glm::ivec3, std::vector<int>> &neighbors) {
     for (int i = 0; i < fluid_particals_number_; i++) {
         auto delta_pos = glm::vec3(0.0f);
 

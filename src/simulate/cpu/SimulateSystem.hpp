@@ -1,5 +1,5 @@
-#ifndef FLUID_SOLVER_PBF_CPU_HPP
-#define FLUID_SOLVER_PBF_CPU_HPP
+#ifndef SIMULATE_CPU_SIMULATE_SYSTEM_HPP
+#define SIMULATE_CPU_SIMULATE_SYSTEM_HPP
 
 #include <chrono>
 #include <glm/glm.hpp>
@@ -7,13 +7,13 @@
 #include <map>
 #include <vector>
 
-#include "../FluidSolver.hpp"
+#include "../SimulateSystem.hpp"
 #include "Particles.hpp"
 
-namespace Simulation {
-namespace PbfCpu {
+namespace simulate {
+namespace cpu {
 
-class FluidSolver : public ::Simulation::FluidSolver {
+class SimulateSystem : public ::simulate::SimulateSystem {
 private:
     Particles particles_;
     double particle_radius_ = 0.025;
@@ -36,16 +36,16 @@ private:
     std::vector<double> calculate_lagrange_multiplier(std::vector<double> &densities, std::map<glm::ivec3, std::vector<int>> &neighbors);
     void solve_constraint(std::vector<double> &lambdas, std::map<glm::ivec3, std::vector<int>> &neighbors);
 
-    FluidSolver() = default;
-    FluidSolver(FluidSolver const &) = delete;
-    void operator=(FluidSolver const &) = delete;
+    SimulateSystem() = default;
+    SimulateSystem(SimulateSystem const &) = delete;
+    void operator=(SimulateSystem const &) = delete;
 
 public:
-    static FluidSolver &get_instance() {
-        static FluidSolver instance;
+    static SimulateSystem &get_instance() {
+        static SimulateSystem instance;
         return instance;
     };
-    ~FluidSolver() = default;
+    ~SimulateSystem() = default;
 
     // config
     void set_particle_radius(double radius) {
@@ -59,7 +59,7 @@ public:
     std::vector<glm::vec3> get_partical_position() override;
 };
 
-}  // namespace PbfCpu
-}  // namespace Simulation
+} // namespace cpu
+} // namespace simulate
 
 #endif

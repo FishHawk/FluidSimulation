@@ -1,11 +1,11 @@
-#ifndef PARTICLES_HPP
-#define PARTICLES_HPP
+#ifndef SIMULATE_CPU_PARTICLES_HPP
+#define SIMULATE_CPU_PARTICLES_HPP
 
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace Simulation {
-namespace PbfCpu {
+namespace simulate {
+namespace cpu {
 
 struct Particles {
     std::vector<double> masses;
@@ -26,7 +26,7 @@ struct Particles {
     void add(double mass, glm::vec3 position);
 };
 
-}  // namespace PbfCpu
-}  // namespace Simulation
+} // namespace cpu
+} // namespace simulate
 
 #endif

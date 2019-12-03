@@ -1,7 +1,7 @@
 #include "SceneBuilder.hpp"
 
-#include "simulation/pbf_cpu/FluidSolver.hpp"
-#include "simulation/pbf_cuda/FluidSolver.hpp"
+#include "simulate/cpu/SimulateSystem.hpp"
+#include "simulate/cuda/SimulateSystem.hpp"
 
 void fill(std::vector<glm::vec3> &boundary_particles,
           double particle_radius,
@@ -60,33 +60,33 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
     return boundary_particles;
 }
 
-std::pair<RenderSystem &, Simulation::FluidSolver &> SceneBuilder::build_scene(std::string scene_name) {
+std::pair<RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
     if (scene_name == "pbf-cpu") {
         auto &render_system = RenderSystem::get_instance();
-        auto &fluid_solver = Simulation::PbfCpu::FluidSolver::get_instance();
+        auto &simulate_system = simulate::cpu::SimulateSystem::get_instance();
 
         double particle_radius = 0.017;
         render_system.set_particle_radius(particle_radius);
-        fluid_solver.set_particle_radius(particle_radius);
+        simulate_system.set_particle_radius(particle_radius);
 
         auto fluid_particles = init_fluid_particles(particle_radius);
         auto boundary_particles = init_boundary_particles(particle_radius);
-        fluid_solver.setup_model(fluid_particles, boundary_particles);
+        simulate_system.setup_model(fluid_particles, boundary_particles);
 
-        return {render_system, fluid_solver};
+        return {render_system, simulate_system};
     } else if (scene_name == "pbf-cuda") {
         auto &render_system = RenderSystem::get_instance();
-        auto &fluid_solver = Simulation::PbfCuda::FluidSolver::get_instance();
+        auto &simulate_system = simulate::cuda::SimulateSystem::get_instance();
 
         double particle_radius = 0.025;
         render_system.set_particle_radius(particle_radius);
-        // fluid_solver.set_particle_radius(particle_radius);
+        // simulate_system.set_particle_radius(particle_radius);
 
         auto fluid_particles = init_fluid_particles(particle_radius);
         auto boundary_particles = init_boundary_particles(particle_radius);
         boundary_particles.clear();
-        fluid_solver.setup_model(fluid_particles, boundary_particles);
+        simulate_system.setup_model(fluid_particles, boundary_particles);
 
-        return {render_system, fluid_solver};
+        return {render_system, simulate_system};
     }
 }

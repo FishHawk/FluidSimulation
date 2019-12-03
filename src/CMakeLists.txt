@@ -11,11 +11,11 @@ add_executable(fluid_simulation
     render/MeshBuilder.cpp
     render/Shader.cpp
     render/Camera.cpp
-    simulation/pbf_cpu/FluidSolver.cpp
-    simulation/pbf_cpu/Particles.cpp
-    simulation/pbf_cpu/Kernel.cpp
-    simulation/pbf_cuda/FluidSolver.cpp
-    simulation/pbf_cuda/CudaWarp.cu
+    simulate/cpu/SimulateSystem.cpp
+    simulate/cpu/Particles.cpp
+    simulate/cpu/Kernel.cpp
+    simulate/cuda/SimulateSystem.cpp
+    simulate/cuda/FluidSolver.cu
     main.cpp)
 
 target_include_directories(fluid_simulation 

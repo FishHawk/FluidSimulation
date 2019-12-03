@@ -1,5 +1,5 @@
-#ifndef CUDA_KERNEL_CUH
-#define CUDA_KERNEL_CUH
+#ifndef SIMULATE_CUDA_KERNEL_CUH
+#define SIMULATE_CUDA_KERNEL_CUH
 
 #include <cooperative_groups.h>
 #include <math.h>
@@ -11,7 +11,7 @@
 #include <thrust/sort.h>
 #include <thrust/tuple.h>
 
-#include "CudaWarp.cuh"
+#include "FluidSolver.cuh"
 
 using namespace cooperative_groups;
 
