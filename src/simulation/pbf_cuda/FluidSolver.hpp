@@ -8,12 +8,23 @@
 #include <vector>
 
 #include "../FluidSolver.hpp"
+#include "CudaWarp.cuh"
 
 namespace Simulation {
 namespace PbfCuda {
 
 class FluidSolver : public ::Simulation::FluidSolver {
 private:
+    std::vector<glm::vec4> positions_;
+    size_t fluid_particles_number_ = 0;
+    size_t boundary_particles_number_ = 0;
+
+    std::chrono::system_clock::time_point time_point_;
+    float time_step_ = 0.016;
+
+	SimulateParams m_params;
+    FluidSolverCuda solver_;
+
     FluidSolver() = default;
     FluidSolver(FluidSolver const &) = delete;
     void operator=(FluidSolver const &) = delete;
@@ -37,7 +48,7 @@ public:
     std::vector<glm::vec3> get_partical_position() override;
 };
 
-}  // namespace PbfCuda
-}  // namespace Simulation
+} // namespace PbfCuda
+} // namespace Simulation
 
 #endif

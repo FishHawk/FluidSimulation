@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     glEnable(GL_CULL_FACE);
 
     // build scene
-    auto [render_system, fluid_solver] = SceneBuilder::build_scene("pbf-cpu");
+    auto [render_system, fluid_solver] = SceneBuilder::build_scene("pbf-gpu");
     std::thread simulation_thread([&] {
         while (!glfwWindowShouldClose(window)) {
             while (fluid_solver.is_running()) {

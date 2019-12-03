@@ -26,11 +26,11 @@ void fill(std::vector<glm::vec3> &boundary_particles,
 std::vector<glm::vec3> SceneBuilder::init_fluid_particles(double particle_radius) {
     std::vector<glm::vec3> fluid_particles;
 
-    const double fluid_x = 0.5, fluid_z = 0.5, fluid_y = 0.5;
+    const double fluid_x = 2*0.5, fluid_z = 2*0.5, fluid_y =2* 0.5;
     const double x1 = -fluid_x * 0.5;
     const double x2 = fluid_x * 0.5;
-    const double y1 = 1.0 - fluid_y;
-    const double y2 = 1.0;
+    const double y1 = 2.0 - fluid_y;
+    const double y2 = 2.0;
     const double z1 = -fluid_z * 0.5;
     const double z2 = fluid_z * 0.5;
 
@@ -77,6 +77,15 @@ std::pair<RenderSystem &, Simulation::FluidSolver &> SceneBuilder::build_scene(s
     } else if (scene_name == "pbf-cuda") {
         auto &render_system = RenderSystem::get_instance();
         auto &fluid_solver = Simulation::PbfCuda::FluidSolver::get_instance();
+
+        double particle_radius = 0.025;
+        render_system.set_particle_radius(particle_radius);
+        // fluid_solver.set_particle_radius(particle_radius);
+
+        auto fluid_particles = init_fluid_particles(particle_radius);
+        auto boundary_particles = init_boundary_particles(particle_radius);
+        boundary_particles.clear();
+        fluid_solver.setup_model(fluid_particles, boundary_particles);
 
         return {render_system, fluid_solver};
     }
