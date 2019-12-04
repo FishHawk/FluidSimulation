@@ -28,9 +28,8 @@ private:
     void update_time_step();
 
     void reset_acceleration();
-    void update_particles_ignore_constraint(float delta_time);
-    void constraint_projection();
-    void correct_velocity(float delta_time);
+    void calculate_predicted_positions(float delta_time);
+    void update_particles(float delta_time);
 
     std::vector<double> calculate_lagrange_multiplier(std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);
     void solve_constraint(std::vector<double> &lambdas, std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);

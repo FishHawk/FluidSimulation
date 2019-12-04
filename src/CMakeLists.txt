@@ -13,7 +13,7 @@ add_executable(fluid_simulation
     render/Camera.cpp
     simulate/cpu/SimulateSystem.cpp
     simulate/cpu/Particles.cpp
-    simulate/cpu/Kernel.cpp
+    simulate/cpu/SplineInterpolation.cpp
     simulate/cuda/SimulateSystem.cpp
     simulate/cuda/FluidSolver.cu
     main.cpp)
