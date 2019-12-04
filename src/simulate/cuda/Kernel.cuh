@@ -33,9 +33,8 @@ __global__ void calculate_delta_positions(
 __global__ void correct_predicted_positions(
     float4 *predictedPos, float3 *deltaPos, unsigned int numParticles);
 
-inline __host__ __device__
-    float3
-    cross(float3 a, float3 b) {
+// util functions
+inline __host__ __device__ float3 cross(float3 a, float3 b) {
     return make_float3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
 
@@ -76,7 +75,14 @@ __device__ unsigned int calcGridHashKernel(int3 gridPos) {
     return gridPos.z * params.m_gridSize.x * params.m_gridSize.y + gridPos.y * params.m_gridSize.x + gridPos.x;
 }
 
-__global__ void calculate_predicted_positions(float4 *positions, float4 *velocities, float4 *predicted_positions, float delta_time, unsigned int particles_num) {
+// kernel functions
+__global__ void calculate_predicted_positions(
+    float4 *positions,
+    float4 *velocities,
+    float4 *predicted_positions,
+    float delta_time,
+    unsigned int particles_num) {
+
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= particles_num)
         return;
@@ -95,54 +101,33 @@ __global__ void calculate_predicted_positions(float4 *positions, float4 *velocit
     // collision with walls.
     if (nPos.x > 1.0f - params.m_particleRadius) {
         nPos.x = 1.0f - params.m_particleRadius;
-        nVel.x = -0.9 * nVel.x;
     }
     if (nPos.x < -1.0f + params.m_particleRadius) {
         nPos.x = -1.0f + params.m_particleRadius;
-        nVel.x = -0.9 * nVel.x;
     }
 
     if (nPos.y > 4.0f - params.m_particleRadius) {
         nPos.y = 4.0f - params.m_particleRadius;
-        nVel.y = -0.9 * nVel.y;
     }
     if (nPos.y < -0.0f + params.m_particleRadius) {
         nPos.y = -0.0f + params.m_particleRadius;
-        nVel.y = -0.9 * nVel.y;
     }
 
     if (nPos.z > 1.0f - params.m_particleRadius) {
         nPos.z = 1.0f - params.m_particleRadius;
-        nVel.z = -0.9 * nVel.z;
     }
     if (nPos.z < -1.0f + params.m_particleRadius) {
         nPos.z = -1.0f + params.m_particleRadius;
-        nVel.z = -0.9 * nVel.z;
     }
 
     predicted_positions[index] = {nPos.x, nPos.y, nPos.z, readPos.w};
-}
-
-__global__ void update_particles(float4 *positions, float4 *velocities, float4 *predicted_positions, float inv_delta_time, unsigned int particles_num) {
-    int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index >= particles_num)
-        return;
-
-    float4 oldPos = positions[index];
-    float4 newPos = predicted_positions[index];
-    float4 readVel = velocities[index];
-    float3 posDiff = {newPos.x - oldPos.x, newPos.y - oldPos.y, newPos.z - oldPos.z};
-    posDiff.x *= inv_delta_time;
-    posDiff.y *= inv_delta_time;
-    posDiff.z *= inv_delta_time;
-    velocities[index] = {posDiff.x, posDiff.y, posDiff.z, readVel.w};
-    positions[index] = {newPos.x, newPos.y, newPos.z, newPos.w};
 }
 
 __global__ void calculate_cell_ids(
     unsigned int *gridParticleHash,
     float4 *pos,
     unsigned int numParticles) {
+
     unsigned int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= numParticles)
         return;
@@ -153,7 +138,13 @@ __global__ void calculate_cell_ids(
     gridParticleHash[index] = hashValue;
 }
 
-void sort_particles_by_cell_ids(float4 *positions, float4 *velocities, float4 *predicted_positions, unsigned int *cell_ids, unsigned int particles_number) {
+void sort_particles_by_cell_ids(
+    float4 *positions,
+    float4 *velocities,
+    float4 *predicted_positions,
+    unsigned int *cell_ids,
+    unsigned int particles_number) {
+
     thrust::device_ptr<float4> ptrPos(positions);
     thrust::device_ptr<float4> ptrVel(velocities);
     thrust::device_ptr<float4> ptrPredictedPos(predicted_positions);
@@ -164,10 +155,11 @@ void sort_particles_by_cell_ids(float4 *positions, float4 *velocities, float4 *p
 }
 
 __global__ void calculate_cell_range(
-    unsigned int *gridParticleHash, // input: sorted grid hashes
-    unsigned int *cellStart,        // output: cell start index
-    unsigned int *cellEnd,          // output: cell end index
+    unsigned int *gridParticleHash,
+    unsigned int *cellStart,
+    unsigned int *cellEnd,
     unsigned int numParticles) {
+
     thread_block cta = this_thread_block();
     extern __shared__ unsigned int sharedHash[];
     unsigned int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -204,7 +196,7 @@ __global__ void calculate_lagrange_multiplier(
     unsigned int *cellEnd,
     unsigned int numParticles,
     unsigned int numCells) {
-    // calculate current particle's density and lagrange multiplier.
+
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= numParticles)
         return;
@@ -266,6 +258,7 @@ __global__ void calculate_delta_positions(
     unsigned int *cellStart,
     unsigned int *cellEnd,
     unsigned int numParticles) {
+
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= numParticles)
         return;
@@ -314,6 +307,7 @@ __global__ void correct_predicted_positions(
     float4 *predictedPos,
     float3 *deltaPos,
     unsigned int numParticles) {
+
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= numParticles)
         return;
@@ -324,6 +318,28 @@ __global__ void correct_predicted_positions(
     readDeltaPos.z = readPos.z + readDeltaPos.z;
 
     predictedPos[index] = {readDeltaPos.x, readDeltaPos.y, readDeltaPos.z, readPos.w};
+}
+
+__global__ void update_particles(
+    float4 *positions,
+    float4 *velocities,
+    float4 *predicted_positions,
+    float inv_delta_time,
+    unsigned int particles_num) {
+
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index >= particles_num)
+        return;
+
+    float4 oldPos = positions[index];
+    float4 newPos = predicted_positions[index];
+    float4 readVel = velocities[index];
+    float3 posDiff = {newPos.x - oldPos.x, newPos.y - oldPos.y, newPos.z - oldPos.z};
+    posDiff.x *= inv_delta_time;
+    posDiff.y *= inv_delta_time;
+    posDiff.z *= inv_delta_time;
+    velocities[index] = {posDiff.x, posDiff.y, posDiff.z, readVel.w};
+    positions[index] = {newPos.x, newPos.y, newPos.z, newPos.w};
 }
 
 #endif

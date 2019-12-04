@@ -57,13 +57,13 @@ void SimulateSystem::simulate() {
     if (duration < time_step_) {
         return;
     } else {
+        std::cout << duration / time_step_ << std::endl;
         // update time
         time_point_ = time_now;
         // update constants
         setParameters(&m_params);
 
-        float delta_time = 0.006f;
-        solver_.simulate(delta_time);
+        solver_.simulate(time_step_);
     }
 }
 
