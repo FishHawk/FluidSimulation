@@ -45,6 +45,10 @@ void RenderSystem::process_keyboard_input(GLFWwindow *window, float delta_time) 
         camera_.move(Camera::MovementDirection::LEFT, delta_time);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera_.move(Camera::MovementDirection::RIGHT, delta_time);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera_.move(Camera::MovementDirection::UP, delta_time);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera_.move(Camera::MovementDirection::DOWN, delta_time);
 }
 
 RenderSystem::RenderSystem()

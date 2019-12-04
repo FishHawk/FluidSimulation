@@ -29,6 +29,14 @@ void Camera::move(MovementDirection direction, float delta_time) {
         position_ -= right_ * velocity;
     else if (direction == MovementDirection::RIGHT)
         position_ += right_ * velocity;
+    else if (direction == MovementDirection::UP)
+        position_ += up_ * velocity;
+    else if (direction == MovementDirection::DOWN)
+        position_ -= up_ * velocity;
+
+    // add y axis limit
+    if (position_.y < 0.1)
+        position_.y = 0.1;
 }
 
 void Camera::rotate(float xoffset, float yoffset, GLboolean constrain_pitch) {

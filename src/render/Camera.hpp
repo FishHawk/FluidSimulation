@@ -15,7 +15,9 @@ public:
         FORWARD,
         BACKWARD,
         LEFT,
-        RIGHT
+        RIGHT,
+        UP,
+        DOWN
     };
 
     Camera(glm::vec3 position, float yaw, float pitch, float frame_ratio)
@@ -41,7 +43,7 @@ public:
 protected:
     // config
     const glm::vec3 world_up_ = glm::vec3(0.0f, 1.0f, 0.0f);
-    float move_speed_ = 2.5f;
+    float move_speed_ = 3.5f;
     float rotate_sensitivity_ = 0.1f;
 
     // camera positon
