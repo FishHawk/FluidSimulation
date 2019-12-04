@@ -16,7 +16,7 @@ public:
     void terminate() { is_running_ = false; };
 
     virtual void simulate() = 0;
-    virtual std::vector<glm::vec3> get_partical_position() = 0;
+    virtual std::vector<glm::vec3> get_particle_position() = 0;
 };
 
 } // namespace simulate

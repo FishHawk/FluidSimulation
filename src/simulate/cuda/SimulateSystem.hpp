@@ -45,7 +45,7 @@ public:
                      const std::vector<glm::vec3> &boundary_particles);
 
     void simulate() override;
-    std::vector<glm::vec3> get_partical_position() override;
+    std::vector<glm::vec3> get_particle_position() override;
 };
 
 } // namespace cuda

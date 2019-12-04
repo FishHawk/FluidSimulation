@@ -67,7 +67,7 @@ void SimulateSystem::simulate() {
     }
 }
 
-std::vector<glm::vec3> SimulateSystem::get_partical_position() {
+std::vector<glm::vec3> SimulateSystem::get_particle_position() {
     cudaMemcpy(positions_.data(), solver_.positions, positions_.size() * sizeof(float4), cudaMemcpyDeviceToHost);
     std::vector<glm::vec3> fluid_postitions;
     for (int i = 0; i < fluid_particles_number_; i++) {

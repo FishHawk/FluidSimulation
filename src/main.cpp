@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
         render_system.process_keyboard_input(window, delta_time);
 
         // update
-        render_system.update_particles(fluid_solver.get_partical_position());
+        render_system.update_particles(fluid_solver.get_particle_position());
 
         // render
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
