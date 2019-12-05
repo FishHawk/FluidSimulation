@@ -26,7 +26,7 @@ void fill(std::vector<glm::vec3> &boundary_particles,
 std::vector<glm::vec3> SceneBuilder::init_fluid_particles(double particle_radius) {
     std::vector<glm::vec3> fluid_particles;
 
-    const double fluid_x = 2*0.5, fluid_z = 2*0.5, fluid_y =2* 0.5;
+    const double fluid_x = 2 * 0.5, fluid_z = 2 * 0.5, fluid_y = 2 * 0.5;
     const double x1 = -fluid_x * 0.5;
     const double x2 = fluid_x * 0.5;
     const double y1 = 2.0 - fluid_y;
@@ -50,18 +50,18 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
     const double z1 = -container_z * 0.5;
     const double z2 = container_z * 0.5;
 
-    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y1, z2));  // y-
+    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y1, z2)); // y-
     // fill(boundary_particles, particle_radius, glm::vec3(x1, y2, z1), glm::vec3(x2, y2, z2)); // y+
     fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x1, y2, z2)); // x-
-    fill(boundary_particles, particle_radius, glm::vec3(x2, y1, z1), glm::vec3(x2, y2, z2));  // x+
-    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y2, z1));  // z-
-    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z2), glm::vec3(x2, y2, z2));  // z+
+    fill(boundary_particles, particle_radius, glm::vec3(x2, y1, z1), glm::vec3(x2, y2, z2)); // x+
+    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z1), glm::vec3(x2, y2, z1)); // z-
+    fill(boundary_particles, particle_radius, glm::vec3(x1, y1, z2), glm::vec3(x2, y2, z2)); // z+
 
     return boundary_particles;
 }
 
 std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
-    if (scene_name == "pbf-cpu") {
+    if (scene_name == "cpu") {
         auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cpu::SimulateSystem::get_instance();
 
@@ -74,7 +74,7 @@ std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::buil
         simulate_system.setup_model(fluid_particles, boundary_particles);
 
         return {render_system, simulate_system};
-    } else if (scene_name == "pbf-cuda") {
+    } else if (scene_name == "cuda") {
         auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cuda::SimulateSystem::get_instance();
 
@@ -89,4 +89,5 @@ std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::buil
 
         return {render_system, simulate_system};
     }
+    exit(0);
 }
