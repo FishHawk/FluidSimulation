@@ -35,7 +35,7 @@ void initialize_glfw() {
     glfwSetCursorPosCallback(window, render::RenderSystem::mouse_callback);
     glfwSetScrollCallback(window, render::RenderSystem::scroll_callback);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void initialize_glad() {
@@ -71,20 +71,23 @@ int main(int argc, char *argv[]) {
     initialize_imgui();
 
     // build scene
-    auto [render_system, fluid_solver] = SceneBuilder::build_scene(argv[1]);
+    std::string device;
+    if (argc == 1)
+        device = "cpu";
+    else
+        device = argv[1];
+    auto [render_system, fluid_system] = SceneBuilder::build_scene(device);
     std::thread simulation_thread([&] {
-        while (!glfwWindowShouldClose(window)) {
-            while (fluid_solver.is_running()) {
-                fluid_solver.simulate();
+        while (!fluid_system.is_terminated()) {
+            while (fluid_system.is_running()) {
+                fluid_system.simulate();
             }
         }
     });
 
-    // timing
+    // Main loop
     float delta_time = 0.0f;
     float last_time_point = 0.0f;
-
-    // main loop
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
         float current_time_point = glfwGetTime();
@@ -98,7 +101,7 @@ int main(int argc, char *argv[]) {
 
         // Render world
         render_system.process_keyboard_input(window, delta_time);
-        render_system.update_particles(fluid_solver.get_particle_position());
+        render_system.update_particles(fluid_system.get_particle_position());
         render_system.render();
 
         // Start new imgui frame
@@ -107,11 +110,16 @@ int main(int argc, char *argv[]) {
         ImGui::NewFrame();
 
         // Define gui
-        // ImGui::ShowDemoWindow();
         ImGui::Begin("Hello, world!");
+        if (!fluid_system.is_running() && ImGui::Button("Start"))
+            fluid_system.start();
+        else if (fluid_system.is_running() && ImGui::Button("Stop"))
+            fluid_system.stop();
+        if (ImGui::Button("Reset"))
+            ;
         ImGui::Text("This is some useful text.");
         ImGui::End();
-        
+
         // Render gui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -122,7 +130,8 @@ int main(int argc, char *argv[]) {
     }
 
     // terminate
-    fluid_solver.terminate();
+    fluid_system.stop();
+    fluid_system.terminate();
     simulation_thread.join();
     glfwTerminate();
     return 0;

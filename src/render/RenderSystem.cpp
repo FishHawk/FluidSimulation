@@ -1,5 +1,6 @@
 #include "RenderSystem.hpp"
 
+#include <iostream>
 using namespace render;
 
 void RenderSystem::framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -9,10 +10,16 @@ void RenderSystem::framebuffer_size_callback(GLFWwindow *window, int width, int 
 }
 
 void RenderSystem::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+
     auto &render_system = get_instance();
     static float xlast = 0;
     static float ylast = 0;
     static bool is_first = true;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
+        is_first = true;
+        return;
+    }
 
     if (is_first) {
         xlast = xpos;
@@ -30,29 +37,16 @@ void RenderSystem::mouse_callback(GLFWwindow *window, double xpos, double ypos) 
 
 void RenderSystem::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     auto &render_system = get_instance();
-    render_system.camera_.zoom(yoffset);
+    render_system.camera_.slide(yoffset);
 }
 
 void RenderSystem::process_keyboard_input(GLFWwindow *window, float delta_time) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::FORWARD, delta_time);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::BACKWARD, delta_time);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::LEFT, delta_time);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::RIGHT, delta_time);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::UP, delta_time);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camera_.move(Camera::MovementDirection::DOWN, delta_time);
 }
 
 RenderSystem::RenderSystem()
-    : camera_(glm::vec3(-3.0f, 2.0f, 0.0f), 0.0f, 0.0f, 1.4f) {
+    : camera_(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, -30.0f, 1.4f, 10.0f) {
     shader_manager_["simple3"] = new Shader("src/glsl/simple3.vs", "src/glsl/simple3.fs");
     shader_manager_["particals"] = new Shader("src/glsl/particals.vs", "src/glsl/simple3.fs");
 

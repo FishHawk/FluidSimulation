@@ -32,11 +32,13 @@ public:
     const glm::vec3 front();
 
     virtual glm::mat4 view_matrix() = 0;
-    virtual glm::mat4 projection_matrix() = 0;
+    glm::mat4 projection_matrix() {
+        return glm::perspective(glm::radians(zoom_), frame_ratio_, 0.1f, 100.0f);
+    }
 
     // update camera
     void move(MovementDirection direction, float delta_time);
-    void rotate(float xoffset, float yoffset, GLboolean constrain_pitch = true);
+    void rotate(float xoffset, float yoffset);
     void zoom(float yoffset);
     void change_frame_ratio(float frame_ratio);
 

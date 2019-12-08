@@ -11,9 +11,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Drawable.hpp"
-#include "FpsCamera.hpp"
 #include "MeshBuilder.hpp"
 #include "Shader.hpp"
+#include "camera/ThirdPersonCamera.hpp"
 
 namespace render {
 
@@ -23,7 +23,7 @@ private:
     std::map<std::string, Shader *> shader_manager_;
     std::map<std::string, Drawable *> drawable_manager_;
 
-    FpsCamera camera_;
+    ThirdPersonCamera camera_;
 
     double particle_radius_ = 0.025;
 

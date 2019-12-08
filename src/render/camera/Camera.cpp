@@ -39,7 +39,7 @@ void Camera::move(MovementDirection direction, float delta_time) {
         position_.y = 0.1;
 }
 
-void Camera::rotate(float xoffset, float yoffset, GLboolean constrain_pitch) {
+void Camera::rotate(float xoffset, float yoffset) {
     xoffset *= rotate_sensitivity_;
     yoffset *= rotate_sensitivity_;
 
@@ -51,12 +51,10 @@ void Camera::rotate(float xoffset, float yoffset, GLboolean constrain_pitch) {
     else if (yaw_ < -180)
         yaw_ += 360;
 
-    if (constrain_pitch) {
-        if (pitch_ > 89.0f)
-            pitch_ = 89.0f;
-        else if (pitch_ < -89.0f)
-            pitch_ = -89.0f;
-    }
+    if (pitch_ > -1.0f)
+        pitch_ = -1.0f;
+    else if (pitch_ < -89.0f)
+        pitch_ = -89.0f;
 
     update_direction_vector();
 }

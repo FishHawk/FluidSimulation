@@ -21,7 +21,7 @@ add_executable(fluid_simulation
     render/Mesh.cpp
     render/MeshBuilder.cpp
     render/Shader.cpp
-    render/Camera.cpp
+    render/camera/Camera.cpp
     simulate/cpu/SimulateSystem.cpp
     simulate/cpu/Particles.cpp
     simulate/cpu/SplineInterpolation.cpp
