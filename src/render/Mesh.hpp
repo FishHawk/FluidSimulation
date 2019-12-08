@@ -1,10 +1,10 @@
 #ifndef RENDER_MESH_HPP
 #define RENDER_MESH_HPP
 
-#include <glad/glad.h>
-
-#include <glm/glm.hpp>
 #include <vector>
+
+#include <glad/glad.h>
+#include <glm/glm.hpp>
 
 namespace render {
 

@@ -1,12 +1,14 @@
 #ifndef RENDER_RENDER_SYSTEM_HPP
 #define RENDER_RENDER_SYSTEM_HPP
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <map>
 
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <map>
+
+// Include glfw3.h after our OpenGL definitions
+#include <GLFW/glfw3.h>
 
 #include "Drawable.hpp"
 #include "FpsCamera.hpp"

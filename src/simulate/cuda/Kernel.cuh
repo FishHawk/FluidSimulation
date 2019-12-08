@@ -1,8 +1,9 @@
 #ifndef SIMULATE_CUDA_KERNEL_CUH
 #define SIMULATE_CUDA_KERNEL_CUH
 
-#include <cooperative_groups.h>
 #include <math.h>
+
+#include <cooperative_groups.h>
 #include <math_constants.h>
 #include <thrust/device_ptr.h>
 #include <thrust/for_each.h>

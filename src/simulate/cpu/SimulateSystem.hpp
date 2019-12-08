@@ -2,12 +2,13 @@
 #define SIMULATE_CPU_SIMULATE_SYSTEM_HPP
 
 #include <chrono>
-#include <glm/glm.hpp>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
 
-#include "../SimulateSystem.hpp"
+#include <glm/glm.hpp>
+
+#include "simulate/SimulateSystem.hpp"
 #include "Particles.hpp"
 
 namespace simulate {

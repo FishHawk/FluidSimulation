@@ -1,7 +1,8 @@
 #include "SimulateSystem.hpp"
 
+#include <glm/gtx/hash.hpp>
+
 #include "SplineInterpolation.hpp"
-#include "glm/gtx/hash.hpp"
 
 // expand glm ivec3 for map
 template <>

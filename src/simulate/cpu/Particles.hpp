@@ -1,8 +1,9 @@
 #ifndef SIMULATE_CPU_PARTICLES_HPP
 #define SIMULATE_CPU_PARTICLES_HPP
 
-#include <glm/glm.hpp>
 #include <vector>
+
+#include <glm/glm.hpp>
 
 namespace simulate {
 namespace cpu {

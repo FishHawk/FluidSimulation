@@ -2,12 +2,13 @@
 #define SIMULATE_CUDA_SIMULATE_SYSTEM_HPP
 
 #include <chrono>
-#include <glm/glm.hpp>
 #include <iostream>
 #include <map>
 #include <vector>
 
-#include "../SimulateSystem.hpp"
+#include <glm/glm.hpp>
+
+#include "simulate/SimulateSystem.hpp"
 #include "FluidSolver.cuh"
 
 namespace simulate {

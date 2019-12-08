@@ -29,6 +29,8 @@ add_executable(fluid_simulation
     simulate/cuda/FluidSolver.cu
     main.cpp)
 
+target_include_directories(fluid_simulation PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/)
+
 target_link_libraries(fluid_simulation
     PRIVATE
         Cuda::cudart

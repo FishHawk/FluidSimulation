@@ -1,10 +1,10 @@
 #ifndef RENDER_SHADER_HPP
 #define RENDER_SHADER_HPP
 
-#include <glad/glad.h>
-
-#include <glm/glm.hpp>
 #include <string>
+
+#include <glad/glad.h>
+#include <glm/glm.hpp>
 
 namespace render {
 

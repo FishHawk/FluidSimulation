@@ -1,8 +1,10 @@
 #include "FluidSolver.cuh"
-#include "Kernel.cuh"
+
+#include <iostream>
 
 #include <cuda_runtime.h>
-#include <iostream>
+
+#include "Kernel.cuh"
 
 using namespace simulate::cuda;
 

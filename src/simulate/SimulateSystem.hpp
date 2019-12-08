@@ -1,8 +1,9 @@
 #ifndef SIMULATE_SIMULATE_SYSTEM_HPP
 #define SIMULATE_SIMULATE_SYSTEM_HPP
 
-#include <glm/glm.hpp>
 #include <vector>
+
+#include <glm/glm.hpp>
 
 namespace simulate {
 

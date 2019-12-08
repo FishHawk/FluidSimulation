@@ -92,10 +92,14 @@ int main(int argc, char *argv[]) {
         last_time_point = current_time_point;
         // std::cout << 1 / deltaTime << "fps\r" << std::flush;
 
-
         // Clear
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Render world
+        render_system.process_keyboard_input(window, delta_time);
+        render_system.update_particles(fluid_solver.get_particle_position());
+        render_system.render();
 
         // Start new imgui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -110,15 +114,7 @@ int main(int argc, char *argv[]) {
         
         // Render gui
         ImGui::Render();
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Render world
-        render_system.process_keyboard_input(window, delta_time);
-        render_system.update_particles(fluid_solver.get_particle_position());
-        render_system.render();
 
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
