@@ -154,3 +154,9 @@ void Mesh3Builder::add_icosphere(glm::vec3 p, float r, glm::vec3 color, unsigned
         add_triangle(points[indice[0]], points[indice[1]], points[indice[2]], color);
     }
 }
+
+Mesh2Builder &Mesh2Builder::add_line(glm::vec3 p1, glm::vec3 p2, glm::vec3 color) {
+    vertices_.push_back(Vertex2{p1, color});
+    vertices_.push_back(Vertex2{p2, color});
+    return *this;
+};

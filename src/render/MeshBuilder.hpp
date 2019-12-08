@@ -36,6 +36,23 @@ public:
     };
 };
 
+class Mesh2Builder {
+private:
+    std::vector<Vertex2> vertices_;
+
+    Mesh2Builder &operator<<(Vertex2 vertex) {
+        vertices_.push_back(vertex);
+        return *this;
+    };
+
+public:
+    Mesh2Builder& add_line(glm::vec3 p1, glm::vec3 p2, glm::vec3 color);
+
+    Mesh2 *build_mesh() {
+        return new Mesh2(vertices_);
+    };
+};
+
 } // namespace render
 
 #endif

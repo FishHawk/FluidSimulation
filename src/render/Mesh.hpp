@@ -15,7 +15,7 @@ struct Vertex3 {
 };
 
 struct Vertex2 {
-    glm::vec2 position;
+    glm::vec3 position;
     glm::vec3 color;
 };
 
@@ -34,6 +34,11 @@ public:
 class Mesh3 : public Mesh {
 public:
     Mesh3(std::vector<Vertex3> vertices);
+};
+
+class Mesh2 : public Mesh {
+public:
+    Mesh2(std::vector<Vertex2> vertices);
 };
 
 } // namespace render

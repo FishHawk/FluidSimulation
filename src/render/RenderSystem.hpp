@@ -7,8 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-// Include glfw3.h after our OpenGL definitions
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h> // include glfw3.h after opengl definitions
 
 #include "Drawable.hpp"
 #include "MeshBuilder.hpp"

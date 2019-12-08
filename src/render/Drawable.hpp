@@ -53,6 +53,19 @@ public:
     };
 };
 
+class Drawable2 : public Drawable {
+private:
+    Mesh2 *mesh_;
+
+public:
+    Drawable2(Mesh2 *mesh) : mesh_(mesh){};
+    void draw() {
+        mesh_->bind();
+        glDrawArrays(GL_LINES, 0, mesh_->size());
+        mesh_->unbind();
+    };
+};
+
 } // namespace render
 
 #endif
