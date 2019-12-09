@@ -1,6 +1,7 @@
 #ifndef SIMULATE_SIMULATE_SYSTEM_HPP
 #define SIMULATE_SIMULATE_SYSTEM_HPP
 
+#include <atomic>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -11,8 +12,8 @@ namespace simulate {
 
 class SimulateSystem {
 private:
-    bool is_running_ = false;
-    bool is_terminated_ = false;
+    std::atomic<bool> is_running_{false};
+    std::atomic<bool> is_terminated_{false};
 
 protected:
     std::mutex m;
