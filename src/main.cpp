@@ -9,6 +9,7 @@
 
 #include <GLFW/glfw3.h> // include glfw3.h after opengl definitions
 
+#include "Input.hpp"
 #include "SceneBuilder.hpp"
 
 static GLFWwindow *window;
@@ -30,11 +31,9 @@ void initialize_glfw() {
     glfwMakeContextCurrent(window);
 
     // Set callback function
-    glfwSetFramebufferSizeCallback(window, render::RenderSystem::framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, render::RenderSystem::mouse_callback);
-    glfwSetScrollCallback(window, render::RenderSystem::scroll_callback);
-
-    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetFramebufferSizeCallback(window, Input::framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, Input::mouse_callback);
+    glfwSetScrollCallback(window, Input::scroll_callback);
 }
 
 void initialize_glad() {
@@ -43,11 +42,6 @@ void initialize_glad() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
-
-    // Enable opengl capabilities
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_FRAMEBUFFER_SRGB);
-    glEnable(GL_CULL_FACE);
 }
 
 void initialize_imgui() {
@@ -75,11 +69,11 @@ int main(int argc, char *argv[]) {
         device = "cpu";
     else
         device = argv[1];
-    auto [render_system, fluid_system] = SceneBuilder::build_scene(device);
+    auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
     std::thread simulation_thread([&] {
-        while (!fluid_system.is_terminated()) {
-            while (fluid_system.is_running()) {
-                fluid_system.simulate();
+        while (!simulate_system.is_terminated()) {
+            while (simulate_system.is_running()) {
+                simulate_system.simulate();
             }
         }
     });
@@ -87,6 +81,7 @@ int main(int argc, char *argv[]) {
     // Main loop
     float delta_time = 0.0f;
     float last_time_point = 0.0f;
+    bool render_axis = false, render_container = false;
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
         float current_time_point = glfwGetTime();
@@ -99,8 +94,8 @@ int main(int argc, char *argv[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render world
-        render_system.process_keyboard_input(window, delta_time);
-        render_system.update_particles(fluid_system.get_particle_position());
+        Input::process_keyboard_input(window, delta_time);
+        render_system.update_particles(simulate_system.get_particle_position());
         render_system.render();
 
         // Start new imgui frame
@@ -110,13 +105,21 @@ int main(int argc, char *argv[]) {
 
         // Define gui
         ImGui::Begin("Hello, world!");
-        if (!fluid_system.is_running() && ImGui::Button("Start"))
-            fluid_system.start();
-        else if (fluid_system.is_running() && ImGui::Button("Stop"))
-            fluid_system.stop();
+
+        ImGui::Text("Simulate System");
+        if (!simulate_system.is_running() && ImGui::Button("Start"))
+            simulate_system.start();
+        else if (simulate_system.is_running() && ImGui::Button("Stop"))
+            simulate_system.stop();
+        ImGui::SameLine();
         if (ImGui::Button("Reset"))
             ;
-        ImGui::Text("This is some useful text.");
+        ImGui::Separator();
+
+        ImGui::Text("Render System");
+        ImGui::Checkbox("Render Axis", render_system.get_axis_switch());
+        ImGui::Checkbox("Render Container", render_system.get_container_switch());
+
         ImGui::End();
 
         // Render gui
@@ -129,8 +132,8 @@ int main(int argc, char *argv[]) {
     }
 
     // terminate
-    fluid_system.stop();
-    fluid_system.terminate();
+    simulate_system.stop();
+    simulate_system.terminate();
     simulation_thread.join();
     glfwTerminate();
     return 0;

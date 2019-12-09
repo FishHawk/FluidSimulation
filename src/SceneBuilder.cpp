@@ -61,8 +61,13 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
 }
 
 std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
+    glm::vec3 container_size(2.0f, 4.0f, 2.0f);
+    glm::vec3 container_position(-container_size.x * 0.5f, 0.0f, -container_size.z * 0.5f);
+
+    auto &render_system = render::RenderSystem::get_instance();
+    render_system.set_container(container_position, container_size);
+
     if (scene_name == "cpu") {
-        auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cpu::SimulateSystem::get_instance();
 
         double particle_radius = 0.025;
@@ -75,12 +80,11 @@ std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::buil
 
         return {render_system, simulate_system};
     } else if (scene_name == "cuda") {
-        auto &render_system = render::RenderSystem::get_instance();
         auto &simulate_system = simulate::cuda::SimulateSystem::get_instance();
 
         double particle_radius = 0.025;
         render_system.set_particle_radius(particle_radius);
-        // simulate_system.set_particle_radius(particle_radius);
+        simulate_system.set_particle_radius(particle_radius);
 
         auto fluid_particles = init_fluid_particles(particle_radius);
         auto boundary_particles = init_boundary_particles(particle_radius);

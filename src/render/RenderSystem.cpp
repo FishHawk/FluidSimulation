@@ -3,48 +3,6 @@
 #include <iostream>
 using namespace render;
 
-void RenderSystem::framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    auto &render_system = get_instance();
-    glViewport(0, 0, width, height);
-    render_system.camera_.change_frame_ratio((float)width / (float)height);
-}
-
-void RenderSystem::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-
-    auto &render_system = get_instance();
-    static float xlast = 0;
-    static float ylast = 0;
-    static bool is_first = true;
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
-        is_first = true;
-        return;
-    }
-
-    if (is_first) {
-        xlast = xpos;
-        ylast = ypos;
-        is_first = false;
-    }
-
-    float xoffset = xpos - xlast;
-    float yoffset = ylast - ypos;
-    render_system.camera_.rotate(xoffset, yoffset);
-
-    xlast = xpos;
-    ylast = ypos;
-}
-
-void RenderSystem::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-    auto &render_system = get_instance();
-    render_system.camera_.slide(yoffset);
-}
-
-void RenderSystem::process_keyboard_input(GLFWwindow *window, float delta_time) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 RenderSystem::RenderSystem()
     : camera_(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, -30.0f, 1.4f, 10.0f) {
     shader_manager_["simple2"] = new Shader("src/glsl/simple2.vs", "src/glsl/simple2.fs");
@@ -81,6 +39,13 @@ RenderSystem::RenderSystem()
         mesh_manager_["axis"] = mesh;
         drawable_manager_["axis"] = new Drawable2(mesh);
     }
+    {
+        const glm::vec3 container_color{0.0f, 0.0f, 0.0f};
+        Mesh2Builder builder;
+        auto mesh = builder.add_cube_frame(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), container_color).build_mesh();
+        mesh_manager_["container"] = mesh;
+        drawable_manager_["container"] = new Drawable2(mesh);
+    }
 }
 
 RenderSystem::~RenderSystem() {}
@@ -90,37 +55,58 @@ void RenderSystem::update_particles(std::vector<glm::vec3> positions) {
 }
 
 void RenderSystem::render() {
+    // enable opengl capabilities
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_CULL_FACE);
+
     glm::mat4 model;
     glm::mat4 view = camera_.view_matrix();
     glm::mat4 projection = camera_.projection_matrix();
 
-    auto &simple3_shader_ = *shader_manager_["simple3"];
-    simple3_shader_.use();
-    simple3_shader_.set_uniform("view", view);
-    simple3_shader_.set_uniform("projection", projection);
-    simple3_shader_.set_uniform("view_pos", camera_.position());
+    {
+        auto &simple3_shader_ = *shader_manager_["simple3"];
+        simple3_shader_.use();
+        simple3_shader_.set_uniform("view", view);
+        simple3_shader_.set_uniform("projection", projection);
+        simple3_shader_.set_uniform("view_pos", camera_.position());
 
-    model = glm::mat4(1.0f);
-    simple3_shader_.set_uniform("model", model);
-    drawable_manager_["floor"]->draw();
+        model = glm::mat4(1.0f);
+        simple3_shader_.set_uniform("model", model);
+        glDisable(GL_DEPTH_TEST);
+        drawable_manager_["floor"]->draw();
+        glEnable(GL_DEPTH_TEST);
+    }
+    {
+        auto &simple2_shader_ = *shader_manager_["simple2"];
+        simple2_shader_.use();
+        simple2_shader_.set_uniform("view", view);
+        simple2_shader_.set_uniform("projection", projection);
 
-    auto &simple2_shader_ = *shader_manager_["simple2"];
-    simple2_shader_.use();
-    simple2_shader_.set_uniform("view", view);
-    simple2_shader_.set_uniform("projection", projection);
+        if (is_axis_enabled_) {
+            model = glm::mat4(1.0f);
+            simple2_shader_.set_uniform("model", model);
+            drawable_manager_["axis"]->draw();
+        }
 
-    model = glm::mat4(1.0f);
-    simple2_shader_.set_uniform("model", model);
-    drawable_manager_["axis"]->draw();
+        if (is_container_enabled_) {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, container_position_);
+            model = glm::scale(model, container_size_);
+            simple2_shader_.set_uniform("model", model);
+            drawable_manager_["container"]->draw();
+        }
+    }
+    {
+        auto &particals_shader_ = *shader_manager_["particals"];
+        particals_shader_.use();
+        particals_shader_.set_uniform("view", view);
+        particals_shader_.set_uniform("projection", projection);
+        particals_shader_.set_uniform("view_pos", camera_.position());
 
-    auto &particals_shader_ = *shader_manager_["particals"];
-    particals_shader_.use();
-    particals_shader_.set_uniform("view", view);
-    particals_shader_.set_uniform("projection", projection);
-    particals_shader_.set_uniform("view_pos", camera_.position());
-
-    model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(particle_radius_ * 2));
-    particals_shader_.set_uniform("model", model);
-    drawable_manager_["particals"]->draw();
+        model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(particle_radius_ * 2));
+        particals_shader_.set_uniform("model", model);
+        drawable_manager_["particals"]->draw();
+    }
 };

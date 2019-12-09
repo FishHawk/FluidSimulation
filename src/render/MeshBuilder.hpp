@@ -24,11 +24,11 @@ public:
         Z_NEGATIVE,
     };
 
-    void add_triangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color);
+    Mesh3Builder&  add_triangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color);
     template <Direction dir>
-    void add_surface(glm::vec3 p, glm::vec2 size, glm::vec3 color);
-    void add_cube(glm::vec3 p, glm::vec3 size, glm::vec3 color);
-    void add_icosphere(glm::vec3 p, float r, glm::vec3 color, unsigned int level = 3);
+    Mesh3Builder&  add_surface(glm::vec3 p, glm::vec2 size, glm::vec3 color);
+    Mesh3Builder&  add_cube(glm::vec3 p, glm::vec3 size, glm::vec3 color);
+    Mesh3Builder&  add_icosphere(glm::vec3 p, float r, glm::vec3 color, unsigned int level = 3);
     // void add_uvsphere(glm::vec3 p, float r, glm::vec3 color);
 
     Mesh3 *build_mesh() {
@@ -47,6 +47,7 @@ private:
 
 public:
     Mesh2Builder& add_line(glm::vec3 p1, glm::vec3 p2, glm::vec3 color);
+    Mesh2Builder& add_cube_frame(glm::vec3 p, glm::vec3 size, glm::vec3 color);
 
     Mesh2 *build_mesh() {
         return new Mesh2(vertices_);

@@ -24,7 +24,16 @@ private:
 
     ThirdPersonCamera camera_;
 
+    // fluid
     double particle_radius_ = 0.025;
+
+    // axis
+    bool is_axis_enabled_ = false;
+
+    // container
+    bool is_container_enabled_ = false;
+    glm::vec3 container_position_ = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 container_size_ = glm::vec3(1.0f, 1.0f, 1.0f);
 
     RenderSystem();
     RenderSystem(RenderSystem const &) = delete;
@@ -40,18 +49,23 @@ public:
     };
     ~RenderSystem();
 
-    // config
+    // fluid
     void set_particle_radius(double radius) { particle_radius_ = radius; }
-
-    // input
-    static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-    static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-    static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-    void process_keyboard_input(GLFWwindow *window, float delta_time);
-
-    void render();
-
     void update_particles(std::vector<glm::vec3> positions);
+
+    // axis
+    bool *get_axis_switch() { return &is_axis_enabled_; };
+
+    // container
+    bool *get_container_switch() { return &is_container_enabled_; };
+    void set_container(glm::vec3 container_position, glm::vec3 container_size) {
+        container_position_ = container_position;
+        container_size_ = container_size;
+    }
+
+    // render
+    ThirdPersonCamera &get_camera() { return camera_; }
+    void render();
 };
 
 } // namespace render
