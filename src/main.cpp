@@ -1,6 +1,5 @@
 #include <functional>
 #include <iostream>
-#include <thread>
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -45,14 +44,18 @@ void initialize_glad() {
 }
 
 void initialize_imgui() {
-    // Setup imgui context
+    // setup imgui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    // Setup imgui style
+    // setup imgui io
+    auto &io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+
+    // setup imgui style
     ImGui::StyleColorsDark();
 
-    // Setup platform/renderer bindings
+    // setup platform/renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 };
@@ -70,13 +73,6 @@ int main(int argc, char *argv[]) {
     else
         device = argv[1];
     auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
-    std::thread simulation_thread([&] {
-        while (!simulate_system.is_terminated()) {
-            while (simulate_system.is_running()) {
-                simulate_system.simulate();
-            }
-        }
-    });
 
     // Main loop
     float delta_time = 0.0f;
@@ -104,7 +100,7 @@ int main(int argc, char *argv[]) {
         ImGui::NewFrame();
 
         // Define gui
-        ImGui::Begin("Hello, world!");
+        ImGui::Begin("Console");
 
         ImGui::Text("Simulate System");
         if (!simulate_system.is_running() && ImGui::Button("Start"))
@@ -112,8 +108,10 @@ int main(int argc, char *argv[]) {
         else if (simulate_system.is_running() && ImGui::Button("Stop"))
             simulate_system.stop();
         ImGui::SameLine();
-        if (ImGui::Button("Reset"))
-            ;
+        if (ImGui::Button("Reset")) {
+            simulate_system.stop();
+            simulate_system.reset();
+        }
         ImGui::Separator();
 
         ImGui::Text("Render System");
@@ -132,9 +130,7 @@ int main(int argc, char *argv[]) {
     }
 
     // terminate
-    simulate_system.stop();
     simulate_system.terminate();
-    simulation_thread.join();
     glfwTerminate();
     return 0;
 }

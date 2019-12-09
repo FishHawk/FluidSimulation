@@ -53,6 +53,7 @@ public:
     }
     void setup_model(const std::vector<glm::vec3> &fluid_particles,
                      const std::vector<glm::vec3> &boundary_particles);
+    void reset() override;
 
     void simulate() override;
     std::vector<glm::vec3> get_particle_position() override;

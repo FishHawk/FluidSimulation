@@ -11,6 +11,7 @@ void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
 
     for (const auto &pos : fluid_particles) {
         positions_.push_back(glm::vec4(pos, 0));
+        initial_positions_.push_back(glm::vec4(pos, 0));
     }
     // for (const auto &pos : boundary_particles) {
     //     positions_.push_back(glm::vec4(pos, 0));
@@ -49,6 +50,13 @@ void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
 
     m_params.m_oneDivWPoly6 = 1.0f / (m_params.m_poly6Coff *
                                       pow(m_params.m_sphRadiusSquared - pow(0.1 * m_params.m_sphRadius, 2.0), 3.0));
+}
+
+void SimulateSystem::reset() {
+    stop();
+    std::lock_guard<std::mutex> lock(m);
+    cudaMemcpy(solver_.positions, initial_positions_.data(), fluid_particles_number_ * sizeof(float4), cudaMemcpyHostToDevice);
+    cudaMemset(solver_.velocities, 0, fluid_particles_number_ * sizeof(float4));
 }
 
 void SimulateSystem::simulate() {

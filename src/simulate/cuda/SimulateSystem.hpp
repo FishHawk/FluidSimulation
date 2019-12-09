@@ -17,6 +17,7 @@ namespace cuda {
 class SimulateSystem : public ::simulate::SimulateSystem {
 private:
     std::vector<glm::vec4> positions_;
+    std::vector<glm::vec4> initial_positions_;
     size_t fluid_particles_number_ = 0;
     size_t boundary_particles_number_ = 0;
 
@@ -44,6 +45,7 @@ public:
     }
     void setup_model(const std::vector<glm::vec3> &fluid_particles,
                      const std::vector<glm::vec3> &boundary_particles);
+    void reset() override;
 
     void simulate() override;
     std::vector<glm::vec3> get_particle_position() override;

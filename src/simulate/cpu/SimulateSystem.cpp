@@ -63,6 +63,12 @@ void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
     boundary_particles_number_ = boundary_particles.size();
 }
 
+void SimulateSystem::reset() {
+    stop();
+    std::lock_guard<std::mutex> lock(m);
+    particles_.reset();
+}
+
 std::vector<glm::vec3> SimulateSystem::get_particle_position() {
     std::vector<glm::vec3> fluid_particle_positions;
     // for (int i = 0; i < particles_.size(); i++) {

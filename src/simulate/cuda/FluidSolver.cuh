@@ -10,6 +10,7 @@ class FluidSolverCuda {
 public:
     float4 *positions;
     float4 *velocities;
+
     float4 *predicted_positions;
     float3 *delta_positions;
 
