@@ -4,18 +4,15 @@
 
 using namespace simulate::cuda;
 
-void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
-                                 const std::vector<glm::vec3> &boundary_particles) {
-    fluid_particles_number_ = fluid_particles.size();
-    boundary_particles_number_ = boundary_particles.size();
+void SimulateSystem::set_particles_position(const std::vector<glm::vec3> &particles_initial_positions) {
+    time_point_ = std::chrono::system_clock::now();
 
-    for (const auto &pos : fluid_particles) {
+    fluid_particles_number_ = particles_initial_positions.size();
+
+    for (const auto &pos : particles_initial_positions) {
         positions_.push_back(glm::vec4(pos, 0));
         initial_positions_.push_back(glm::vec4(pos, 0));
     }
-    // for (const auto &pos : boundary_particles) {
-    //     positions_.push_back(glm::vec4(pos, 0));
-    // }
 
     solver_.particles_number = fluid_particles_number_;
     solver_.malloc();

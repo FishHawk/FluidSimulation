@@ -11,9 +11,10 @@ class SceneBuilder {
 private:
     static std::vector<glm::vec3> init_fluid_particles(double particle_radius);
     static std::vector<glm::vec3> init_boundary_particles(double particle_radius);
+    static simulate::SimulateSystem &get_simulate_system(std::string device);
 
 public:
-    static std::pair<render::RenderSystem &, simulate::SimulateSystem &> build_scene(std::string scene_name);
+    static std::pair<render::RenderSystem &, simulate::SimulateSystem &> build_scene(std::string device);
 };
 
 #endif

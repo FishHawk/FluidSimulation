@@ -46,16 +46,18 @@ public:
     };
     ~SimulateSystem() = default;
 
-    // config
-    void set_particle_radius(double radius) {
+    // simulate
+    void simulate() override;
+    void reset() override;
+
+    // fluid particles
+    void set_particles_position(const std::vector<glm::vec3> &particles_initial_positions) override;
+    void set_particles_radius(double radius) {
         particle_radius_ = radius;
         sph_radius_ = 4 * radius;
     }
-    void setup_model(const std::vector<glm::vec3> &fluid_particles,
-                     const std::vector<glm::vec3> &boundary_particles);
-    void reset() override;
 
-    void simulate() override;
+    
     std::vector<glm::vec3> get_particle_position() override;
 };
 

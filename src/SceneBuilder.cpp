@@ -26,7 +26,8 @@ void fill(std::vector<glm::vec3> &boundary_particles,
 std::vector<glm::vec3> SceneBuilder::init_fluid_particles(double particle_radius) {
     std::vector<glm::vec3> fluid_particles;
 
-    const double fluid_x = 2 * 0.5, fluid_z = 2 * 0.5, fluid_y = 2 * 0.5;
+    const double p = 2;
+    const double fluid_x = p * 0.5, fluid_z = p * 0.5, fluid_y = p * 0.5;
     const double x1 = -fluid_x * 0.5;
     const double x2 = fluid_x * 0.5;
     const double y1 = 2.0 - fluid_y;
@@ -60,38 +61,28 @@ std::vector<glm::vec3> SceneBuilder::init_boundary_particles(double particle_rad
     return boundary_particles;
 }
 
-std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string scene_name) {
+simulate::SimulateSystem &SceneBuilder::get_simulate_system(std::string device) {
+    if (device == "cpu")
+        return simulate::cpu::SimulateSystem::get_instance();
+    else if (device == "cuda")
+        return simulate::cuda::SimulateSystem::get_instance();
+}
+
+std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::build_scene(std::string device) {
+    auto &render_system = render::RenderSystem::get_instance();
+    auto &simulate_system = get_simulate_system(device);
+
     glm::vec3 container_size(2.0f, 4.0f, 2.0f);
     glm::vec3 container_position(-container_size.x * 0.5f, 0.0f, -container_size.z * 0.5f);
-
-    auto &render_system = render::RenderSystem::get_instance();
     render_system.set_container(container_position, container_size);
+    simulate_system.set_container(container_position, container_size);
 
-    if (scene_name == "cpu") {
-        auto &simulate_system = simulate::cpu::SimulateSystem::get_instance();
+    double particle_radius = 0.025;
+    render_system.set_particle_radius(particle_radius);
+    simulate_system.set_particles_radius(particle_radius);
 
-        double particle_radius = 0.025;
-        render_system.set_particle_radius(particle_radius);
-        simulate_system.set_particle_radius(particle_radius);
+    auto fluid_particles = init_fluid_particles(particle_radius);
+    simulate_system.set_particles_position(fluid_particles);
 
-        auto fluid_particles = init_fluid_particles(particle_radius);
-        auto boundary_particles = init_boundary_particles(particle_radius);
-        simulate_system.setup_model(fluid_particles, boundary_particles);
-
-        return {render_system, simulate_system};
-    } else if (scene_name == "cuda") {
-        auto &simulate_system = simulate::cuda::SimulateSystem::get_instance();
-
-        double particle_radius = 0.025;
-        render_system.set_particle_radius(particle_radius);
-        simulate_system.set_particle_radius(particle_radius);
-
-        auto fluid_particles = init_fluid_particles(particle_radius);
-        auto boundary_particles = init_boundary_particles(particle_radius);
-        boundary_particles.clear();
-        simulate_system.setup_model(fluid_particles, boundary_particles);
-
-        return {render_system, simulate_system};
-    }
-    exit(0);
+    return {render_system, simulate_system};
 }

@@ -22,45 +22,43 @@ struct std::equal_to<glm::ivec3> {
 
 using namespace simulate::cpu;
 
-void SimulateSystem::setup_model(const std::vector<glm::vec3> &fluid_particles,
-                                 const std::vector<glm::vec3> &boundary_particles) {
+void SimulateSystem::set_particles_position(const std::vector<glm::vec3> &particles_initial_positions) {
     time_point_ = std::chrono::system_clock::now();
 
     particles_.clear();
-    particles_.reserve(fluid_particles.size() + boundary_particles.size());
+    particles_.reserve(particles_initial_positions.size());
 
     // init fluid particles
     double diameter = 2.0 * particle_radius_;
     double volume = diameter * diameter * diameter * 0.8;
     double mass = volume * fluid_density_;
-    for (const auto &position : fluid_particles) {
+    for (const auto &position : particles_initial_positions) {
         particles_.add(mass, position);
     }
 
-    // init boundary particles
-    std::unordered_map<glm::ivec3, std::vector<int>> neighbors;
-    for (int i = 0; i < boundary_particles.size(); i++) {
-        glm::ivec3 cell_index = boundary_particles[i] / (float)sph_radius_;
-        for (int x = -1; x <= 1; ++x) {
-            for (int y = -1; y <= 1; ++y) {
-                for (int z = -1; z <= 1; ++z) {
-                    neighbors[cell_index + glm::ivec3(x, y, z)].push_back(i);
-                }
-            }
-        }
-    }
+    // // init boundary particles
+    // std::unordered_map<glm::ivec3, std::vector<int>> neighbors;
+    // for (int i = 0; i < boundary_particles.size(); i++) {
+    //     glm::ivec3 cell_index = boundary_particles[i] / (float)sph_radius_;
+    //     for (int x = -1; x <= 1; ++x) {
+    //         for (int y = -1; y <= 1; ++y) {
+    //             for (int z = -1; z <= 1; ++z) {
+    //                 neighbors[cell_index + glm::ivec3(x, y, z)].push_back(i);
+    //             }
+    //         }
+    //     }
+    // }
 
-    for (int i = 0; i < boundary_particles.size(); i++) {
-        double delta = 0;
-        glm::ivec3 cell_index = boundary_particles[i] / (float)sph_radius_;
-        for (const auto &neighbor : neighbors[cell_index]) {
-            delta += SplineInterpolation::poly6_kernel(boundary_particles[i] - boundary_particles[neighbor], sph_radius_);
-        }
-        particles_.add(fluid_density_ / delta, boundary_particles[i]);
-    }
+    // for (int i = 0; i < boundary_particles.size(); i++) {
+    //     double delta = 0;
+    //     glm::ivec3 cell_index = boundary_particles[i] / (float)sph_radius_;
+    //     for (const auto &neighbor : neighbors[cell_index]) {
+    //         delta += SplineInterpolation::poly6_kernel(boundary_particles[i] - boundary_particles[neighbor], sph_radius_);
+    //     }
+    //     particles_.add(fluid_density_ / delta, boundary_particles[i]);
+    // }
 
-    fluid_particles_number_ = fluid_particles.size();
-    boundary_particles_number_ = boundary_particles.size();
+    fluid_particles_number_ = particles_initial_positions.size();
 }
 
 void SimulateSystem::reset() {
@@ -122,6 +120,28 @@ void SimulateSystem::calculate_predicted_positions(float delta_time) {
         if (particles_.masses[i] != 0) {
             particles_.velocities[i] += gravity * delta_time;
             particles_.predicted_positions[i] = particles_.positions[i] + particles_.velocities[i] * delta_time;
+
+            auto &position = particles_.predicted_positions[i];
+            if (position.x < container_start_.x - particle_radius_) {
+                position.x = container_start_.x - particle_radius_;
+            }
+            if (position.x > container_end_.x + particle_radius_) {
+                position.x = container_end_.x + particle_radius_;
+            }
+
+            if (position.y < container_start_.y - particle_radius_) {
+                position.y = container_start_.y - particle_radius_;
+            }
+            if (position.y > container_end_.y + particle_radius_) {
+                position.y = container_end_.y + particle_radius_;
+            }
+
+            if (position.z < container_start_.z - particle_radius_) {
+                position.z = container_start_.z - particle_radius_;
+            }
+            if (position.z > container_end_.z + particle_radius_) {
+                position.z = container_end_.z + particle_radius_;
+            }
         }
     }
 }
