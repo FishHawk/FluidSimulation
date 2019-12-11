@@ -5,8 +5,6 @@
 using namespace simulate::cpu;
 
 void Particles::reserve(std::size_t size) {
-    masses.reserve(size);
-
     positions.reserve(size);
     velocities.reserve(size);
 
@@ -15,8 +13,6 @@ void Particles::reserve(std::size_t size) {
 }
 
 void Particles::clear() {
-    masses.clear();
-
     positions.clear();
     velocities.clear();
 
@@ -30,9 +26,7 @@ void Particles::reset() {
     std::fill(velocities.begin(), velocities.end(), glm::vec3(0.0f));
 }
 
-void Particles::add(double mass, glm::vec3 position) {
-    masses.push_back(mass);
-
+void Particles::add(glm::vec3 position) {
     positions.push_back(position);
     velocities.push_back(glm::vec3(0.0f));
 

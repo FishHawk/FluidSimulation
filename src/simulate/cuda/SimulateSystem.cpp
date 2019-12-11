@@ -4,49 +4,13 @@
 
 using namespace simulate::cuda;
 
-void SimulateSystem::set_particles_position(const std::vector<glm::vec3> &particles_initial_positions) {
-    time_point_ = std::chrono::system_clock::now();
-
+void SimulateSystem::set_particle_position(const std::vector<glm::vec3> &particles_initial_positions) {
     fluid_particles_number_ = particles_initial_positions.size();
 
     for (const auto &pos : particles_initial_positions) {
         positions_.push_back(glm::vec4(pos, 0));
         initial_positions_.push_back(glm::vec4(pos, 0));
     }
-
-    solver_.particles_number = fluid_particles_number_;
-    solver_.malloc();
-    cudaMemcpy(solver_.positions, positions_.data(), fluid_particles_number_ * sizeof(float4), cudaMemcpyHostToDevice);
-
-    auto gridSize = make_uint3(20, 40, 20);
-
-    // particles and grid.
-    m_params.m_gridSize = gridSize;
-    m_params.m_numGridCells = gridSize.x * gridSize.y * gridSize.z;
-
-    // smooth kernel radius.
-    m_params.m_particleRadius = 0.025;
-    m_params.m_sphRadius = 4.0 * 0.025;
-    m_params.m_sphRadiusSquared = m_params.m_sphRadius * m_params.m_sphRadius;
-
-    // lagrange multiplier eps.
-    m_params.m_lambdaEps = 1000.0f;
-
-    // fluid reset density.
-    m_params.m_restDensity = 1.0f / (8.0f * powf(0.025, 3.0f));
-    m_params.m_invRestDensity = 1.0f / m_params.m_restDensity;
-
-    // sph kernel function coff.
-    m_params.m_poly6Coff = 315.0f / (64.0f * M_PI * powf(m_params.m_sphRadius, 9.0));
-    m_params.m_spikyGradCoff = -45.0f / (M_PI * powf(m_params.m_sphRadius, 6.0));
-
-    // grid cells.
-    float cellSize = m_params.m_sphRadius;
-    m_params.m_cellSize = make_float3(cellSize, cellSize, cellSize);
-    m_params.m_worldOrigin = {-1.0f, 0.0f, -1.0f};
-
-    m_params.m_oneDivWPoly6 = 1.0f / (m_params.m_poly6Coff *
-                                      pow(m_params.m_sphRadiusSquared - pow(0.1 * m_params.m_sphRadius, 2.0), 3.0));
 }
 
 void SimulateSystem::reset() {
@@ -57,19 +21,43 @@ void SimulateSystem::reset() {
 }
 
 void SimulateSystem::simulate() {
-    auto time_now = std::chrono::system_clock::now();
-    auto duration = std::chrono::duration<float>(time_now - time_point_).count();
-    if (duration < time_step_) {
-        return;
-    } else {
-        std::cout << duration / time_step_ << std::endl;
-        // update time
-        time_point_ = time_now;
-        // update constants
-        setParameters(&m_params);
+    solver_.simulate(time_step_);
+}
 
-        solver_.simulate(time_step_);
-    }
+void SimulateSystem::apply() {
+    // update constants
+    FluidSolverCuda::Parameters params;
+
+    // container
+    params.container_start = make_float3(container_start_.x, container_start_.y, container_start_.z);
+    params.container_end = make_float3(container_end_.x, container_end_.y, container_end_.z);
+
+    // radius
+    params.particle_radius = particle_radius_;
+    params.sph_radius = sph_radius_;
+    params.sph_radius_2 = sph_radius_ * sph_radius_;
+
+    // sph kernel function coff.
+    params.poly6_coff = 315.0f / (64.0f * M_PI * powf(sph_radius_, 9.0));
+    params.spiky_grad_coff = -45.0f / (M_PI * powf(sph_radius_, 6.0));
+
+    // fluid density.
+    params.density = 1.0f / (8.0f * powf(particle_radius_, 3.0f));
+    params.inv_density = (8.0f * powf(particle_radius_, 3.0f));
+
+    // grid
+    auto container_size = container_end_ - container_start_;
+    params.grid_size = make_uint3(
+        container_size.x / sph_radius_ + 1,
+        container_size.y / sph_radius_ + 1,
+        container_size.z / sph_radius_ + 1);
+
+    FluidSolverCuda::set_parameters(params);
+
+    solver_.particle_number = fluid_particles_number_;
+    solver_.cell_number = params.grid_size.x * params.grid_size.y * params.grid_size.z;
+    solver_.malloc();
+    cudaMemcpy(solver_.positions, positions_.data(), fluid_particles_number_ * sizeof(float4), cudaMemcpyHostToDevice);
 }
 
 std::vector<glm::vec3> SimulateSystem::get_particle_position() {

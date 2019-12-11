@@ -79,10 +79,11 @@ std::pair<render::RenderSystem &, simulate::SimulateSystem &> SceneBuilder::buil
 
     double particle_radius = 0.025;
     render_system.set_particle_radius(particle_radius);
-    simulate_system.set_particles_radius(particle_radius);
+    simulate_system.set_particle_radius(particle_radius);
 
     auto fluid_particles = init_fluid_particles(particle_radius);
-    simulate_system.set_particles_position(fluid_particles);
+    simulate_system.set_particle_position(fluid_particles);
 
+    simulate_system.apply();
     return {render_system, simulate_system};
 }

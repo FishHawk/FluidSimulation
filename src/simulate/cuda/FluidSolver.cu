@@ -1,5 +1,6 @@
-#include "FluidSolver.cuh"
+#include "FluidSolver.hpp"
 
+#include <chrono>
 #include <iostream>
 
 #include <cuda_runtime.h>
@@ -29,69 +30,57 @@ void check_cuda_error(const char *error_msg) {
     }
 }
 
-void setParameters(SimulateParams *hostParams) {
-    cudaMemcpyToSymbol(params, hostParams, sizeof(SimulateParams));
+void FluidSolverCuda::set_parameters(Parameters &params) {
+    cudaMemcpyToSymbol(k_params, &params, sizeof(Parameters));
+    cudaDeviceSynchronize();
 }
 
 void FluidSolverCuda::malloc() {
-    cudaMalloc((void **)&positions, particles_number * sizeof(float4));
-    cudaMalloc((void **)&predicted_positions, particles_number * sizeof(float4));
-    cudaMalloc((void **)&velocities, particles_number * sizeof(float4));
-    cudaMalloc((void **)&delta_positions, particles_number * sizeof(float3));
+    cudaMalloc((void **)&positions, particle_number * sizeof(float4));
+    cudaMalloc((void **)&predicted_positions, particle_number * sizeof(float4));
+    cudaMalloc((void **)&velocities, particle_number * sizeof(float4));
 
-    cudaMalloc((void **)&cell_ids, particles_number * sizeof(unsigned int));
-    auto gridSize = make_uint3(20, 40, 20);
-    cudaMalloc((void **)&cell_start, gridSize.x * gridSize.y * gridSize.z * sizeof(unsigned int));
-    cudaMalloc((void **)&cell_end, gridSize.x * gridSize.y * gridSize.z * sizeof(unsigned int));
+    cudaMalloc((void **)&cell_ids, particle_number * sizeof(unsigned int));
+    cudaMalloc((void **)&cell_start, cell_number * sizeof(unsigned int));
+    cudaMalloc((void **)&cell_end, cell_number * sizeof(unsigned int));
 }
 
 void FluidSolverCuda::simulate(float delta_time) {
-    unsigned int threads_number = 512;
-    unsigned int blocks_number = (particles_number % threads_number != 0) ? (particles_number / threads_number + 1) : (particles_number / threads_number);
+    unsigned int threads_number = 1024;
+    unsigned int blocks_number = (particle_number % threads_number != 0) ? (particle_number / threads_number + 1) : (particle_number / threads_number);
 
     calculate_predicted_positions<<<blocks_number, threads_number>>>(
-        positions, velocities, predicted_positions, delta_time, particles_number);
+        positions, velocities, predicted_positions, delta_time, particle_number);
 
-    // find neighbourhood.
+    // find neighbourhood
     {
-        // calculate grid Hash.
         calculate_cell_ids<<<blocks_number, threads_number>>>(
-            cell_ids, predicted_positions, particles_number);
-        cudaDeviceSynchronize();
+            cell_ids, predicted_positions, particle_number);
 
-        // sort particles based on hash value.
         sort_particles_by_cell_ids(
-            positions, velocities, predicted_positions, cell_ids, particles_number);
-        cudaDeviceSynchronize();
+            positions, velocities, predicted_positions, cell_ids, particle_number);
 
-        // find start index and end index of each cell.
-        cudaMemset(cell_start, 0xffffffff, params.m_numGridCells * sizeof(unsigned int));
+        cudaMemset(cell_start, 0xffffffff, cell_number * sizeof(unsigned int));
         unsigned int memSize = sizeof(unsigned int) * (threads_number + 1);
         calculate_cell_range<<<blocks_number, threads_number, memSize>>>(
-            cell_ids, cell_start, cell_end, particles_number);
+            cell_ids, cell_start, cell_end, particle_number);
     }
 
-    // density constraint.
+    // solve density constraint
     unsigned int iter = 0;
     while (iter < 3) {
-        // calculate density and lagrange multiplier.
         calculate_lagrange_multiplier<<<blocks_number, threads_number>>>(
             velocities, predicted_positions,
-            cell_ids, cell_start, cell_end,
-            particles_number, params.m_numGridCells);
+            cell_start, cell_end,
+            particle_number);
 
-        // calculate delta position.
-        calculate_delta_positions<<<blocks_number, threads_number>>>(
-            velocities, predicted_positions, delta_positions,
-            cell_ids, cell_start, cell_end,
-            particles_number);
-
-        // add delta position.
-        correct_predicted_positions<<<blocks_number, threads_number>>>(
-            predicted_positions, delta_positions, particles_number);
+        solve_constraint<<<blocks_number, threads_number>>>(
+            velocities, predicted_positions,
+            cell_start, cell_end,
+            particle_number);
         ++iter;
     }
 
     update_particles<<<blocks_number, threads_number>>>(
-        positions, velocities, predicted_positions, 1.0f / delta_time, particles_number);
+        positions, velocities, predicted_positions, 1.0f / delta_time, particle_number);
 }

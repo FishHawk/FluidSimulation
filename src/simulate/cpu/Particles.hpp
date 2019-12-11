@@ -9,8 +9,6 @@ namespace simulate {
 namespace cpu {
 
 struct Particles {
-    std::vector<double> masses;
-
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> velocities;
     std::vector<glm::vec3> predicted_positions;
@@ -20,7 +18,7 @@ struct Particles {
     void reserve(std::size_t size);
     void clear();
     void reset();
-    void add(double mass, glm::vec3 position);
+    void add(glm::vec3 position);
 };
 
 } // namespace cpu

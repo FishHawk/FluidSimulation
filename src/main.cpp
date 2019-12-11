@@ -1,4 +1,3 @@
-#include <functional>
 #include <iostream>
 
 #include <glad/glad.h>
@@ -69,7 +68,7 @@ int main(int argc, char *argv[]) {
     // build scene
     std::string device;
     if (argc == 1)
-        device = "cpu";
+        device = "cuda";
     else
         device = argv[1];
     auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
@@ -78,6 +77,8 @@ int main(int argc, char *argv[]) {
     float delta_time = 0.0f;
     float last_time_point = 0.0f;
     bool render_axis = false, render_container = false;
+    std::vector<float> relative_speed_history;
+    relative_speed_history.resize(60 * 3);
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
         float current_time_point = glfwGetTime();
@@ -101,6 +102,22 @@ int main(int argc, char *argv[]) {
 
         // Define gui
         ImGui::Begin("Console");
+
+        ImGui::Text("Info");
+
+        relative_speed_history.erase(relative_speed_history.begin());
+        relative_speed_history.push_back(simulate_system.get_relative_speed());
+
+        float relative_speed_average = 0;
+        for (auto &s : relative_speed_history)
+            relative_speed_average += s;
+        relative_speed_average /= relative_speed_history.size();
+
+        ImGui::Text("relative speed = %f", relative_speed_average);
+        ImGui::PlotLines("", relative_speed_history.data(), relative_speed_history.size(),
+                         0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 30));
+        ImGui::Text("real time / simulate time");
+        ImGui::Separator();
 
         ImGui::Text("Simulate System");
         if (!simulate_system.is_running() && ImGui::Button("Start"))
