@@ -70,8 +70,9 @@ void SimulateSystem::simulate() {
     // solve density constraint
     unsigned int iter = 0;
     while (iter < 3) {
-        auto lambdas = calculate_lagrange_multiplier(neighbors);
-        solve_constraint(lambdas, neighbors);
+        calculate_lagrange_multiplier(neighbors);
+        calculate_delta_positions(neighbors);
+        add_delta_positions();
         ++iter;
     }
 
@@ -109,16 +110,17 @@ void SimulateSystem::calculate_predicted_positions(float delta_time) {
     }
 }
 
-std::vector<float> SimulateSystem::calculate_lagrange_multiplier(std::unordered_map<glm::ivec3, std::vector<int>> &neighbors) {
-    std::vector<float> multipliers;
+void SimulateSystem::calculate_lagrange_multiplier(const std::unordered_map<glm::ivec3, std::vector<int>> &neighbors) {
     for (int i = 0; i < fluid_particles_number_; i++) {
         glm::ivec3 cell_index = particles_.predicted_positions[i] / sph_radius_;
 
         // calculate density
         float density = 0;
-        for (const auto &neighbor : neighbors[cell_index]) {
-            density += inv_density_ * SplineInterpolation::poly6_kernel(
-                                          particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
+        if (neighbors.count(cell_index)) {
+            for (const auto &neighbor : neighbors.at(cell_index)) {
+                density += inv_density_ * SplineInterpolation::poly6_kernel(
+                                              particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
+            }
         }
 
         // calculate lagrange multiplier
@@ -127,32 +129,43 @@ std::vector<float> SimulateSystem::calculate_lagrange_multiplier(std::unordered_
         float lambda = 0.0;
 
         // if (constraint != 0.0) {
-            float sum_grad_cj = 0.0;
-            glm::vec3 grad_ci(0.0);
+        float sum_grad_cj = 0.0;
+        glm::vec3 grad_ci(0.0);
 
-            for (const auto &neighbor : neighbors[cell_index]) {
+        if (neighbors.count(cell_index)) {
+            for (const auto &neighbor : neighbors.at(cell_index)) {
                 glm::vec3 grad_cj = inv_density_ * SplineInterpolation::poly6_kernal_grade(
                                                        particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
                 grad_ci += grad_cj;
                 if (i != neighbor)
                     sum_grad_cj += pow(glm::length(grad_cj), 2.0);
             }
-            sum_grad_cj += pow(glm::length(grad_ci), 2.0);
-            lambda = -constraint / (sum_grad_cj + eps);
+        }
+        sum_grad_cj += pow(glm::length(grad_ci), 2.0);
+        lambda = -constraint / (sum_grad_cj + eps);
         // }
-        multipliers.push_back(lambda);
+        particles_.lambdas[i] = lambda;
     }
-    return multipliers;
 }
 
-void SimulateSystem::solve_constraint(std::vector<float> &lambdas, std::unordered_map<glm::ivec3, std::vector<int>> &neighbors) {
+void SimulateSystem::calculate_delta_positions(const std::unordered_map<glm::ivec3, std::vector<int>> &neighbors) {
     for (int i = 0; i < fluid_particles_number_; i++) {
+        particles_.delta_positions[i] = glm::vec3(0.0f);
+
         glm::ivec3 cell_index = particles_.predicted_positions[i] / sph_radius_;
-        for (const auto &neighbor : neighbors[cell_index]) {
-            glm::vec3 grad_cj = inv_density_ * SplineInterpolation::poly6_kernal_grade(
-                                                   particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
-            particles_.predicted_positions[i] += (lambdas[i] + lambdas[neighbor]) * grad_cj;
+        if (neighbors.count(cell_index)) {
+            for (const auto &neighbor : neighbors.at(cell_index)) {
+                glm::vec3 grad_cj = inv_density_ * SplineInterpolation::poly6_kernal_grade(
+                                                       particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
+                particles_.delta_positions[i] += (particles_.lambdas[i] + particles_.lambdas[neighbor]) * grad_cj;
+            }
         }
+    }
+}
+
+void SimulateSystem::add_delta_positions() {
+    for (int i = 0; i < fluid_particles_number_; i++) {
+        particles_.predicted_positions[i] += particles_.delta_positions[i];
     }
 }
 

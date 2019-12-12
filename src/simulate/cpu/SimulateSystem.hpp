@@ -23,8 +23,9 @@ private:
     float inv_density_{8.0f * powf(particle_radius_, 3.0f)};
 
     void calculate_predicted_positions(float delta_time);
-    std::vector<float> calculate_lagrange_multiplier(std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);
-    void solve_constraint(std::vector<float> &lambdas, std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);
+    void calculate_lagrange_multiplier(const std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);
+    void calculate_delta_positions(const std::unordered_map<glm::ivec3, std::vector<int>> &neighbors);
+    void add_delta_positions();
     void update_particles(float delta_time);
 
     SimulateSystem() = default;
