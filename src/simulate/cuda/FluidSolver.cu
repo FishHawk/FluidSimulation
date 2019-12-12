@@ -1,11 +1,9 @@
-#include "FluidSolver.hpp"
+#include "FluidSolver.cuh"
 
 #include <chrono>
 #include <iostream>
 
 #include <cuda_runtime.h>
-
-#include "Kernel.cuh"
 
 using namespace simulate::cuda;
 
