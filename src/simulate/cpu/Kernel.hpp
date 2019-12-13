@@ -7,10 +7,6 @@ namespace simulate {
 namespace cpu {
 
 class Kernel {
-private:
-    static float poly6_coff;
-    static float spiky_gradient_coff;
-
 public:
     static float poly6(const glm::vec3 &r, float h) {
         auto rl = glm::length(r);

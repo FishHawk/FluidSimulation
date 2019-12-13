@@ -117,9 +117,9 @@ void SimulateSystem::calculate_lagrange_multiplier(const std::unordered_map<glm:
         // calculate density
         float density = 0;
         if (neighbors.count(cell_index)) {
-            for (const auto &neighbor : neighbors.at(cell_index)) {
-                density += inv_density_ * Kernel::poly6(
-                                              particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
+            for (const auto &j : neighbors.at(cell_index)) {
+                auto r = particles_.predicted_positions[i] - particles_.predicted_positions[j];
+                density += inv_density_ * Kernel::poly6(r, sph_radius_);
             }
         }
 
@@ -133,16 +133,17 @@ void SimulateSystem::calculate_lagrange_multiplier(const std::unordered_map<glm:
         glm::vec3 grad_ci(0.0);
 
         if (neighbors.count(cell_index)) {
-            for (const auto &neighbor : neighbors.at(cell_index)) {
-                glm::vec3 grad_cj = inv_density_ * Kernel::spiky_gradient(
-                                                       particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
+            for (const auto &j : neighbors.at(cell_index)) {
+                auto r = particles_.predicted_positions[i] - particles_.predicted_positions[j];
+                glm::vec3 grad_cj = inv_density_ * Kernel::spiky_gradient(r, sph_radius_);
                 grad_ci += grad_cj;
-                if (i != neighbor)
+                if (i != j)
                     sum_grad_cj += pow(glm::length(grad_cj), 2.0);
             }
         }
         sum_grad_cj += pow(glm::length(grad_ci), 2.0);
         lambda = -constraint / (sum_grad_cj + eps);
+        // }
         particles_.lambdas[i] = lambda;
     }
 }
@@ -153,10 +154,10 @@ void SimulateSystem::calculate_delta_positions(const std::unordered_map<glm::ive
 
         glm::ivec3 cell_index = particles_.predicted_positions[i] / sph_radius_;
         if (neighbors.count(cell_index)) {
-            for (const auto &neighbor : neighbors.at(cell_index)) {
-                glm::vec3 grad_cj = inv_density_ * Kernel::spiky_gradient(
-                                                       particles_.predicted_positions[i] - particles_.predicted_positions[neighbor], sph_radius_);
-                particles_.delta_positions[i] += (particles_.lambdas[i] + particles_.lambdas[neighbor]) * grad_cj;
+            for (const auto &j : neighbors.at(cell_index)) {
+                auto r = particles_.predicted_positions[i] - particles_.predicted_positions[j];
+                glm::vec3 grad_cj = inv_density_ * Kernel::spiky_gradient(r, sph_radius_);
+                particles_.delta_positions[i] += (particles_.lambdas[i] + particles_.lambdas[j]) * grad_cj;
             }
         }
     }
