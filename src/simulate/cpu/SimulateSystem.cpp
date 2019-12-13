@@ -124,7 +124,7 @@ void SimulateSystem::calculate_lagrange_multiplier(const std::unordered_map<glm:
         }
 
         // calculate lagrange multiplier
-        const float eps = 1000;
+        const float eps = 10;
         const float constraint = std::max(density - 1.0, 0.0);
         float lambda = 0.0;
 

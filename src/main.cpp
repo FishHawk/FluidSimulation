@@ -9,139 +9,63 @@
 
 #include "Input.hpp"
 #include "SceneBuilder.hpp"
+#include "Ui.hpp"
 
 static GLFWwindow *window;
 
-void initialize_glfw() {
-    // Initialize glfw
+int main(int argc, char *argv[]) {
+    // initialize glfw
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Create window
+    // create window
     window = glfwCreateWindow(1400, 1000, "FluidSimulation", NULL, NULL);
     if (window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        std::cout << "Error: Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        exit(-1);
+        return -1;
     }
     glfwMakeContextCurrent(window);
 
-    // Set callback function
-    glfwSetFramebufferSizeCallback(window, Input::framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, Input::mouse_callback);
-    glfwSetScrollCallback(window, Input::scroll_callback);
-}
-
-void initialize_glad() {
-    // Load all opengl function pointers
+    // load all opengl function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        exit(-1);
+        std::cout << "Error: Failed to initialize GLAD" << std::endl;
+        glfwTerminate();
+        return -1;
     }
-}
-
-void initialize_imgui() {
-    // setup imgui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-
-    // setup imgui io
-    auto &io = ImGui::GetIO();
-    io.IniFilename = nullptr;
-
-    // setup imgui style
-    ImGui::StyleColorsDark();
-
-    // setup platform/renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-};
-
-int main(int argc, char *argv[]) {
-    // initialization
-    initialize_glfw();
-    initialize_glad();
-    initialize_imgui();
 
     // build scene
-    std::string device;
-    if (argc == 1)
-        device = "cuda";
-    else
+    std::string device = "cpu";
+    if (argc > 1)
         device = argv[1];
     auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
 
-    // Main loop
-    float delta_time = 0.0f;
-    float last_time_point = 0.0f;
-    bool render_axis = false, render_container = false;
-    std::vector<float> relative_speed_history;
-    relative_speed_history.resize(60 * 3);
-    while (!glfwWindowShouldClose(window)) {
-        // calculate delta time
-        float current_time_point = glfwGetTime();
-        delta_time = current_time_point - last_time_point;
-        last_time_point = current_time_point;
-        // std::cout << 1 / deltaTime << "fps\r" << std::flush;
+    // initialize input
+    Input::link_render_system(&render_system);
+    Input::link_simulate_system(&simulate_system);
+    Input::register_callback(window);
 
-        // Clear
+    // initialize ui
+    Ui::link_render_system(&render_system);
+    Ui::link_simulate_system(&simulate_system);
+    Ui::init(window);
+
+    // main loop
+    while (!glfwWindowShouldClose(window)) {
+        // clear
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Render world
-        Input::process_keyboard_input(window, delta_time);
+        // render world
         render_system.update_particles(simulate_system.get_particle_position());
         render_system.render();
 
-        // Start new imgui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        // render ui
+        Ui::render();
 
-        // Define gui
-        ImGui::Begin("Console");
-
-        ImGui::Text("Info");
-
-        relative_speed_history.erase(relative_speed_history.begin());
-        relative_speed_history.push_back(simulate_system.get_relative_speed());
-
-        float relative_speed_average = 0;
-        for (auto &s : relative_speed_history)
-            relative_speed_average += s;
-        relative_speed_average /= relative_speed_history.size();
-
-        ImGui::Text("relative speed = %f", relative_speed_average);
-        ImGui::PlotLines("", relative_speed_history.data(), relative_speed_history.size(),
-                         0, nullptr, FLT_MAX, FLT_MAX, ImVec2(0, 30));
-        ImGui::Text("real time / simulate time");
-        ImGui::Separator();
-
-        ImGui::Text("Simulate System");
-        if (!simulate_system.is_running() && ImGui::Button("Start"))
-            simulate_system.start();
-        else if (simulate_system.is_running() && ImGui::Button("Stop"))
-            simulate_system.stop();
-        ImGui::SameLine();
-        if (ImGui::Button("Reset")) {
-            simulate_system.stop();
-            simulate_system.reset();
-        }
-        ImGui::Separator();
-
-        ImGui::Text("Render System");
-        ImGui::Checkbox("Render Axis", render_system.get_axis_switch());
-        ImGui::Checkbox("Render Container", render_system.get_container_switch());
-
-        ImGui::End();
-
-        // Render gui
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Swap buffers and poll IO events
+        // swap buffers and poll io events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

@@ -17,6 +17,8 @@ set_target_properties(Cuda::cudart PROPERTIES
 
 add_executable(fluid_simulation
     SceneBuilder.cpp
+    Input.cpp
+    Ui.cpp
     render/RenderSystem.cpp
     render/Mesh.cpp
     render/MeshBuilder.cpp
