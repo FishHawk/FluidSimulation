@@ -43,13 +43,11 @@ int main(int argc, char *argv[]) {
     auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
 
     // initialize input
-    Input::link_render_system(&render_system);
-    Input::link_simulate_system(&simulate_system);
+    Input::link_to_systems(render_system, simulate_system);
     Input::register_callback(window);
 
     // initialize ui
-    Ui::link_render_system(&render_system);
-    Ui::link_simulate_system(&simulate_system);
+    Ui::link_to_systems(render_system, simulate_system);
     Ui::init(window);
 
     // main loop

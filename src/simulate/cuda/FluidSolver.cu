@@ -7,7 +7,7 @@
 
 using namespace simulate::cuda;
 
-void print_gpu_info() {
+void simulate::cuda::print_gpu_info() {
     cudaDeviceProp dev_prop;
     cudaGetDeviceProperties(&dev_prop, 0);
     std::cout << "gpu name: " << dev_prop.name << std::endl;
@@ -18,7 +18,7 @@ void print_gpu_info() {
     std::cout << "sharedMemPerBlock:" << dev_prop.sharedMemPerBlock / 1024.0 << " KB" << std::endl;
 }
 
-void check_cuda_error(const char *error_msg) {
+void simulate::cuda::check_cuda_error(const char *error_msg) {
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         std::cout << "cuda error : "
