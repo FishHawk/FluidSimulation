@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create window
-    window = glfwCreateWindow(1400, 1000, "FluidSimulation", NULL, NULL);
+    int default_window_width = 1400, default_window_height = 1000;
+    window = glfwCreateWindow(default_window_width, default_window_height, "FluidSimulation", NULL, NULL);
     if (window == nullptr) {
         std::cout << "Error: Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
     if (argc > 1)
         device = argv[1];
     auto [render_system, simulate_system] = SceneBuilder::build_scene(device);
+    render_system.get_camera().change_frame_ratio((float)default_window_width / (float)default_window_height);
 
     // initialize input
     Input::link_to_systems(render_system, simulate_system);

@@ -40,9 +40,6 @@ private:
     void operator=(RenderSystem const &) = delete;
 
 public:
-    const int defuault_window_width = 1400;
-    const int defuault_window_height = 1000;
-
     static RenderSystem &get_instance() {
         static RenderSystem instance;
         return instance;

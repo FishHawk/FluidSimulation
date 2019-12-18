@@ -1,6 +1,5 @@
 #include "RenderSystem.hpp"
 
-#include <iostream>
 using namespace render;
 
 RenderSystem::RenderSystem()
